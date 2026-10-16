@@ -7,4 +7,5 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 enum NodeKind: string
 {
     case Source = 'source';
+    case Variable = 'var';
 }

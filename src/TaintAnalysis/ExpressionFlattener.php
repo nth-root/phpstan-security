@@ -7,10 +7,10 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Variable;
+use PHPStan\Analyser\Scope;
 
 use function in_array;
 use function is_string;
-use function sprintf;
 
 final readonly class ExpressionFlattener
 {
@@ -19,14 +19,18 @@ final readonly class ExpressionFlattener
     /**
      * @return string[]
      */
-    public function flatten(Expr $expr): array
+    public function flatten(Expr $expr, Scope $scope): array
     {
         if ($expr instanceof Variable && is_string($expr->name) && in_array($expr->name, self::SUPERGLOBALS, true)) {
-            return [sprintf('source:%s', $expr->name)];
+            return [TaintNode::source($expr->name)->toString()];
+        }
+
+        if ($expr instanceof Variable && is_string($expr->name)) {
+            return [TaintNode::variable(FunctionKey::of($scope), $expr->name)->toString()];
         }
 
         if ($expr instanceof ArrayDimFetch) {
-            return $this->flatten($expr->var);
+            return $this->flatten($expr->var, $scope);
         }
 
         return [];

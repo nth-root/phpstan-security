@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace NthRoot\PhpstanSecurity\Rules;
 
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\TaintGraph;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
@@ -12,10 +14,7 @@ use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
-use function array_filter;
 use function array_map;
-use function array_unique;
-use function array_values;
 use function implode;
 use function sprintf;
 
@@ -31,18 +30,22 @@ final readonly class TaintRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        $graph = new TaintGraph();
+
+        foreach ($node->get(AssignmentCollector::class) as $assignments) {
+            foreach ($assignments as $assignment) {
+                foreach ($assignment['from'] as $from) {
+                    $graph->addEdge($from, $assignment['to']);
+                }
+            }
+        }
+
+
         $errors = [];
 
         foreach ($node->get(SinkCollector::class) as $file => $sinks) {
             foreach ($sinks as $sink) {
-                $sources = array_values(
-                    array_unique(
-                        array_filter(
-                            $sink['sources'],
-                            fn(string $source) => TaintNode::fromString($source)->isSource(),
-                        )
-                    )
-                );
+                $sources = $graph->getSourcesReaching($sink['sources']);
 
                 if ($sources === []) {
                     continue;
