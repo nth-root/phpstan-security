@@ -50,6 +50,26 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsThroughConcatenation(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/concatenation.php'], [
+            [$this->getMessage('$_GET', 'exec'), 7],
+            [$this->getMessage('$_GET', 'exec'), 13],
+            [$this->getMessage('$_GET', 'exec'), 19],
+            [$this->getMessage('$_POST, $_GET', 'exec'), 29],
+            [$this->getMessage('$_GET', 'exec'), 34],
+        ]);
+    }
+
+    public function testDetectsThroughInterpolation(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/interpolation.php'], [
+            [$this->getMessage('$_GET', 'exec'), 8],
+            [$this->getMessage('$_GET', 'exec'), 9],
+            [$this->getMessage('$_GET', 'exec'), 16],
+        ]);
+    }
+
     private function getMessage(string $source, string $sink): string
     {
         return sprintf(

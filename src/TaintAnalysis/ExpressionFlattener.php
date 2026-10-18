@@ -6,7 +6,9 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
 
 use function in_array;
@@ -31,6 +33,22 @@ final readonly class ExpressionFlattener
 
         if ($expr instanceof ArrayDimFetch) {
             return $this->flatten($expr->var, $scope);
+        }
+
+        if ($expr instanceof Concat) {
+            return [...$this->flatten($expr->left, $scope), ...$this->flatten($expr->right, $scope)];
+        }
+
+        if ($expr instanceof InterpolatedString) {
+            $nodes = [];
+
+            foreach ($expr->parts as $part) {
+                if ($part instanceof Expr) {
+                    $nodes = [...$nodes, ...$this->flatten($part, $scope)];
+                }
+            }
+
+            return $nodes;
         }
 
         return [];
