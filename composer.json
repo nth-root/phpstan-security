@@ -1,7 +1,8 @@
 {
     "name": "nth-root/phpstan-security",
-    "type": "phpstan-extension",
+    "description": "A PHPStan extension that checks your code for security vulnerabilities",
     "license": "MIT",
+    "type": "phpstan-extension",
     "require": {
         "php": "^8.2",
         "phpstan/phpstan": "^2.0"
@@ -21,14 +22,14 @@
             "NthRoot\\PhpstanSecurity\\Tests\\": "tests/"
         }
     },
+    "config": {
+        "sort-packages": true
+    },
     "extra": {
         "phpstan": {
             "includes": [
                 "extension.neon"
             ]
         }
-    },
-    "config": {
-        "sort-packages": true
     }
 }
