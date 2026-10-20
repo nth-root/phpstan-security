@@ -21,9 +21,7 @@ final readonly class SinkCollector implements Collector
 {
     private const UNSAFE_FUNCTIONS = ['exec', 'system'];
 
-    public function __construct(private ReflectionProvider $reflectionProvider, private ExpressionFlattener $expressionFlattener)
-    {
-    }
+    public function __construct(private ReflectionProvider $reflectionProvider, private ExpressionFlattener $expressionFlattener) {}
 
     public function getNodeType(): string
     {

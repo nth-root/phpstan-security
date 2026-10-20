@@ -12,9 +12,7 @@ use function substr;
 
 final readonly class TaintNode
 {
-    public function __construct(public NodeKind $kind, public string $name)
-    {
-    }
+    public function __construct(public NodeKind $kind, public string $name) {}
 
     public static function fromString(string $id): self
     {

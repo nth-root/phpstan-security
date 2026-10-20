@@ -13,7 +13,7 @@ class TaintGraphTest extends TestCase
     {
         $graph = new TaintGraph();
 
-        self::assertSame(['source:_GET'], $graph->getSourcesReaching(['source:_GET']));
+        $this->assertSame(['source:_GET'], $graph->getSourcesReaching(['source:_GET']));
     }
 
     public function testChain(): void
@@ -22,7 +22,7 @@ class TaintGraphTest extends TestCase
         $graph->addEdge('source:_GET', 'var:f:a');
         $graph->addEdge('var:f:a', 'var:f:b');
 
-        self::assertSame(['source:_GET'], $graph->getSourcesReaching(['var:f:b']));
+        $this->assertSame(['source:_GET'], $graph->getSourcesReaching(['var:f:b']));
     }
 
     public function testNoPath(): void
@@ -30,7 +30,7 @@ class TaintGraphTest extends TestCase
         $graph = new TaintGraph();
         $graph->addEdge('source:_GET', 'var:f:a');
 
-        self::assertSame([], $graph->getSourcesReaching(['var:f:b']));
+        $this->assertSame([], $graph->getSourcesReaching(['var:f:b']));
     }
 
     public function testCycle(): void
@@ -39,7 +39,7 @@ class TaintGraphTest extends TestCase
         $graph->addEdge('var:f:a', 'var:f:b');
         $graph->addEdge('var:f:b', 'var:f:a');
 
-        self::assertSame([], $graph->getSourcesReaching(['var:f:a']));
+        $this->assertSame([], $graph->getSourcesReaching(['var:f:a']));
     }
 
     public function testTwoSources(): void
@@ -48,6 +48,6 @@ class TaintGraphTest extends TestCase
         $graph->addEdge('source:_GET', 'var:f:a');
         $graph->addEdge('source:_POST', 'var:f:a');
 
-        self::assertEqualsCanonicalizing(['source:_GET', 'source:_POST'], $graph->getSourcesReaching(['var:f:a']));
+        $this->assertEqualsCanonicalizing(['source:_GET', 'source:_POST'], $graph->getSourcesReaching(['var:f:a']));
     }
 }

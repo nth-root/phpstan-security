@@ -20,9 +20,7 @@ use function is_string;
  */
 final readonly class AssignmentCollector implements Collector
 {
-    public function __construct(private ExpressionFlattener $expressionFlattener)
-    {
-    }
+    public function __construct(private ExpressionFlattener $expressionFlattener) {}
 
     public function getNodeType(): string
     {
