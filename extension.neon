@@ -1,0 +1,11 @@
+services:
+    - NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener
+    -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SinkCollector
+        tags: [phpstan.collector]
+    -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector
+        tags: [phpstan.collector]
+
+rules:
+    - NthRoot\PhpstanSecurity\Rules\TaintRule

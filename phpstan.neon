@@ -5,3 +5,4 @@ parameters:
         - tests
     excludePaths:
         - tests/Rules/data
+        - tests/EndToEnd/data
