@@ -1,6 +1,7 @@
 {
     "name": "nth-root/phpstan-security",
     "type": "phpstan-extension",
+    "license": "MIT",
     "require": {
         "php": "^8.2",
         "phpstan/phpstan": "^2.0"
