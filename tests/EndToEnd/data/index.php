@@ -8,4 +8,6 @@ function run(): void
 
     exec($command);
     exec('ls');
+
+    echo $_GET['x'];
 }

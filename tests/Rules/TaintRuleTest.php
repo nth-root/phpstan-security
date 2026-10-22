@@ -6,6 +6,8 @@ namespace NthRoot\PhpstanSecurity\Tests\Rules;
 
 use NthRoot\PhpstanSecurity\Rules\TaintRule;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
@@ -34,6 +36,8 @@ class TaintRuleTest extends RuleTestCase
             new FunctionCallSinkCollector(self::getContainer()->getByType(ReflectionProvider::class), $expressionFlattener),
             new AssignmentCollector($expressionFlattener),
             new ShellExecSinkCollector($expressionFlattener),
+            new EchoSinkCollector($expressionFlattener),
+            new PrintSinkCollector($expressionFlattener),
         ];
     }
 
@@ -103,6 +107,18 @@ class TaintRuleTest extends RuleTestCase
         $this->analyse([__DIR__ . '/data/taint/shell_exec.php'], [
             [$this->getMessage(SinkType::Shell, '$_GET', 'the backtick operator'), 7],
             [$this->getMessage(SinkType::Shell, '$_GET', 'the backtick operator'), 13],
+        ]);
+    }
+
+    public function testDetectsEchoAndPrint(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/html.php'], [
+            [$this->getMessage(SinkType::Html, '$_GET', 'echo'), 7],
+            [$this->getMessage(SinkType::Html, '$_GET', 'echo'), 9],
+            [$this->getMessage(SinkType::Html, '$_POST', 'echo'), 10],
+            [$this->getMessage(SinkType::Html, '$_GET', 'print'), 12],
+            [$this->getMessage(SinkType::Html, '$_GET', 'echo'), 16],
+            [$this->getMessage(SinkType::Html, '$_GET', 'echo'), 22],
         ]);
     }
 
