@@ -24,8 +24,8 @@ class EndToEndTest extends TestCase
                 [
                     'file' => $directory . '/index.php',
                     'line' => 9,
-                    'message' => 'Tainted value from $_GET is passed to exec()',
-                    'identifier' => 'taint.shell',
+                    'message' => 'Possible command injection: tainted value from $_GET is passed to exec()',
+                    'identifier' => 'tainted.shell',
                 ],
             ],
             $this->analyse($directory),

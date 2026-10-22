@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
+use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
@@ -15,21 +16,24 @@ use PHPStan\Reflection\ReflectionProvider;
 use function sprintf;
 
 /**
- * @implements Collector<FuncCall, array{sink: string, sources: string[], line: int}>
+ * @implements Collector<FuncCall, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
  */
 final readonly class FunctionCallSinkCollector implements Collector
 {
     private const UNSAFE_FUNCTIONS = [
-        'exec' => 'command',
-        'system' => 'command',
-        'shell_exec' => 'command',
-        'passthru' => 'command',
-        'proc_open' => 'command',
-        'popen' => 'command',
-        'pcntl_exec' => 'path',
+        'exec' => ['parameter' => 'command', 'type' => SinkType::Shell],
+        'system' => ['parameter' => 'command', 'type' => SinkType::Shell],
+        'shell_exec' => ['parameter' => 'command', 'type' => SinkType::Shell],
+        'passthru' => ['parameter' => 'command', 'type' => SinkType::Shell],
+        'proc_open' => ['parameter' => 'command', 'type' => SinkType::Shell],
+        'popen' => ['parameter' => 'command', 'type' => SinkType::Shell],
+        'pcntl_exec' => ['parameter' => 'path', 'type' => SinkType::Shell],
     ];
 
-    public function __construct(private ReflectionProvider $reflectionProvider, private ExpressionFlattener $expressionFlattener) {}
+    public function __construct(
+        private ReflectionProvider $reflectionProvider,
+        private ExpressionFlattener $expressionFlattener
+    ) {}
 
     public function getNodeType(): string
     {
@@ -52,7 +56,9 @@ final readonly class FunctionCallSinkCollector implements Collector
             return null;
         }
 
-        $arg = $node->getArg(self::UNSAFE_FUNCTIONS[$functionName], 0);
+        $unsafeFunction = self::UNSAFE_FUNCTIONS[$functionName];
+
+        $arg = $node->getArg($unsafeFunction['parameter'], 0);
 
         if ($arg === null) {
             return null;
@@ -60,6 +66,7 @@ final readonly class FunctionCallSinkCollector implements Collector
 
         return [
             'sink' => sprintf('%s()', $functionName),
+            'type' => $unsafeFunction['type']->value,
             'sources' => $this->expressionFlattener->flatten($arg->value, $scope),
             'line' => $node->getStartLine(),
         ];

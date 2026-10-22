@@ -7,6 +7,7 @@ namespace NthRoot\PhpstanSecurity\Rules;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintGraph;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
@@ -54,8 +55,11 @@ final readonly class TaintRule implements Rule
                         continue;
                     }
 
+                    $type = SinkType::from($sink['type']);
+
                     $message = sprintf(
-                        'Tainted value from %s is passed to %s',
+                        'Possible %s: tainted value from %s is passed to %s',
+                        $type->describe(),
                         implode(
                             ', ',
                             array_map(fn(string $source) => TaintNode::fromString($source)->describe(), $sources)
@@ -66,7 +70,7 @@ final readonly class TaintRule implements Rule
                     $errors[] = RuleErrorBuilder::message($message)
                         ->file($file)
                         ->line($sink['line'])
-                        ->identifier('taint.shell')
+                        ->identifier($type->identifier())
                         ->build();
                 }
             }
