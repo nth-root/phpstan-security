@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NthRoot\PhpstanSecurity\Rules;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
@@ -36,10 +37,17 @@ final readonly class TaintRule implements Rule
     {
         $graph = new TaintGraph();
 
-        foreach ($node->get(AssignmentCollector::class) as $assignments) {
-            foreach ($assignments as $assignment) {
-                foreach ($assignment['from'] as $from) {
-                    $graph->addEdge($from, $assignment['to']);
+        $assignmentsByFile = [
+            $node->get(AssignmentCollector::class),
+            $node->get(CompoundAssignmentCollector::class),
+        ];
+
+        foreach ($assignmentsByFile as $collected) {
+            foreach ($collected as $assignments) {
+                foreach ($assignments as $assignment) {
+                    foreach ($assignment['from'] as $from) {
+                        $graph->addEdge($from, $assignment['to']);
+                    }
                 }
             }
         }
