@@ -12,14 +12,22 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\Reflection\ReflectionProvider;
 
-use function in_array;
+use function sprintf;
 
 /**
  * @implements Collector<FuncCall, array{sink: string, sources: string[], line: int}>
  */
 final readonly class FunctionCallSinkCollector implements Collector
 {
-    private const UNSAFE_FUNCTIONS = ['exec', 'system'];
+    private const UNSAFE_FUNCTIONS = [
+        'exec' => 'command',
+        'system' => 'command',
+        'shell_exec' => 'command',
+        'passthru' => 'command',
+        'proc_open' => 'command',
+        'popen' => 'command',
+        'pcntl_exec' => 'path',
+    ];
 
     public function __construct(private ReflectionProvider $reflectionProvider, private ExpressionFlattener $expressionFlattener) {}
 
@@ -40,11 +48,11 @@ final readonly class FunctionCallSinkCollector implements Collector
 
         $functionName = $this->reflectionProvider->resolveFunctionName($node->name, $scope);
 
-        if (!in_array($functionName, self::UNSAFE_FUNCTIONS, true)) {
+        if (!isset(self::UNSAFE_FUNCTIONS[$functionName])) {
             return null;
         }
 
-        $arg = $node->getArg('command', 0);
+        $arg = $node->getArg(self::UNSAFE_FUNCTIONS[$functionName], 0);
 
         if ($arg === null) {
             return null;

@@ -72,6 +72,18 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsShellFunctions(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/shell_functions.php'], [
+            [$this->getMessage('$_GET', 'shell_exec'), 7],
+            [$this->getMessage('$_GET', 'passthru'), 8],
+            [$this->getMessage('$_GET', 'popen'), 9],
+            [$this->getMessage('$_GET', 'proc_open'), 10],
+            [$this->getMessage('$_GET', 'pcntl_exec'), 11],
+            [$this->getMessage('$_GET', 'pcntl_exec'), 12],
+        ]);
+    }
+
     public function testDetectsUseOfBacktickOperator(): void
     {
         $this->analyse([__DIR__ . '/data/taint/shell_exec.php'], [
