@@ -28,6 +28,8 @@ final readonly class FunctionCallSinkCollector implements Collector
         'proc_open' => ['parameter' => 'command', 'type' => SinkType::Shell],
         'popen' => ['parameter' => 'command', 'type' => SinkType::Shell],
         'pcntl_exec' => ['parameter' => 'path', 'type' => SinkType::Shell],
+        'printf' => ['parameter' => null, 'type' => SinkType::Html],
+        'vprintf' => ['parameter' => null, 'type' => SinkType::Html],
     ];
 
     public function __construct(
@@ -58,16 +60,28 @@ final readonly class FunctionCallSinkCollector implements Collector
 
         $unsafeFunction = self::UNSAFE_FUNCTIONS[$functionName];
 
-        $arg = $node->getArg($unsafeFunction['parameter'], 0);
+        if ($unsafeFunction['parameter'] === null) {
+            $args = $node->getArgs();
+        } else {
+            $arg = $node->getArg($unsafeFunction['parameter'], 0);
 
-        if ($arg === null) {
-            return null;
+            if ($arg === null) {
+                return null;
+            }
+
+            $args = [$arg];
+        }
+
+        $sources = [];
+
+        foreach ($args as $arg) {
+            $sources = [...$sources, ...$this->expressionFlattener->flatten($arg->value, $scope)];
         }
 
         return [
             'sink' => sprintf('%s()', $functionName),
             'type' => $unsafeFunction['type']->value,
-            'sources' => $this->expressionFlattener->flatten($arg->value, $scope),
+            'sources' => $sources,
             'line' => $node->getStartLine(),
         ];
     }

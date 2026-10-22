@@ -122,6 +122,18 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsPrintfFunctions(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/printf.php'], [
+            [$this->getMessage(SinkType::Html, '$_GET', 'printf()'), 7],
+            [$this->getMessage(SinkType::Html, '$_GET', 'printf()'), 8],
+            [$this->getMessage(SinkType::Html, '$_GET', 'printf()'), 9],
+            [$this->getMessage(SinkType::Html, '$_GET', 'printf()'), 11],
+            [$this->getMessage(SinkType::Html, '$_GET', 'vprintf()'), 12],
+            [$this->getMessage(SinkType::Html, '$_GET', 'vprintf()'), 13],
+        ]);
+    }
+
     private function getMessage(SinkType $sinkType, string $source, string $sink): string
     {
         return sprintf(
