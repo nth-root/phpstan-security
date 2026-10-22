@@ -16,12 +16,15 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
+use PHPStan\Rules\FileRuleError;
+use PHPStan\Rules\LineRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 use function array_map;
 use function implode;
 use function sprintf;
+use function usort;
 
 /**
  * @implements Rule<CollectedDataNode>
@@ -91,6 +94,13 @@ final readonly class TaintRule implements Rule
             }
         }
 
+        usort($errors, [$this, 'compare']);
+
         return $errors;
+    }
+
+    private function compare(FileRuleError&LineRuleError $a, FileRuleError&LineRuleError $b): int
+    {
+        return [$a->getFile(), $a->getLine()] <=> [$b->getFile(), $b->getLine()];
     }
 }
