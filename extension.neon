@@ -4,7 +4,7 @@ services:
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector
         tags: [phpstan.collector]
     -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector

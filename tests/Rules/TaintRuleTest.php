@@ -7,7 +7,7 @@ namespace NthRoot\PhpstanSecurity\Tests\Rules;
 use NthRoot\PhpstanSecurity\Rules\TaintRule;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
-use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
@@ -30,7 +30,7 @@ class TaintRuleTest extends RuleTestCase
         $expressionFlattener = new ExpressionFlattener();
 
         return [
-            new SinkCollector(self::getContainer()->getByType(ReflectionProvider::class), $expressionFlattener),
+            new FunctionCallSinkCollector(self::getContainer()->getByType(ReflectionProvider::class), $expressionFlattener),
             new AssignmentCollector($expressionFlattener),
             new ShellExecSinkCollector($expressionFlattener),
         ];

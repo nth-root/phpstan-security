@@ -17,7 +17,7 @@ use function in_array;
 /**
  * @implements Collector<FuncCall, array{sink: string, sources: string[], line: int}>
  */
-final readonly class SinkCollector implements Collector
+final readonly class FunctionCallSinkCollector implements Collector
 {
     private const UNSAFE_FUNCTIONS = ['exec', 'system'];
 

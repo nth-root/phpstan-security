@@ -6,7 +6,7 @@ namespace NthRoot\PhpstanSecurity\Rules;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
-use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintGraph;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
@@ -43,7 +43,7 @@ final readonly class TaintRule implements Rule
 
         $errors = [];
 
-        $sinksByFile = [$node->get(SinkCollector::class), $node->get(ShellExecSinkCollector::class)];
+        $sinksByFile = [$node->get(FunctionCallSinkCollector::class), $node->get(ShellExecSinkCollector::class)];
 
         foreach ($sinksByFile as $collected) {
             foreach ($collected as $file => $sinks) {
