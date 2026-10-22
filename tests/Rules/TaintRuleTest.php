@@ -6,6 +6,7 @@ namespace NthRoot\PhpstanSecurity\Tests\Rules;
 
 use NthRoot\PhpstanSecurity\Rules\TaintRule;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use PHPStan\Reflection\ReflectionProvider;
@@ -31,6 +32,7 @@ class TaintRuleTest extends RuleTestCase
         return [
             new SinkCollector(self::getContainer()->getByType(ReflectionProvider::class), $expressionFlattener),
             new AssignmentCollector($expressionFlattener),
+            new ShellExecSinkCollector($expressionFlattener),
         ];
     }
 
@@ -67,6 +69,14 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage('$_GET', 'exec'), 8],
             [$this->getMessage('$_GET', 'exec'), 9],
             [$this->getMessage('$_GET', 'exec'), 16],
+        ]);
+    }
+
+    public function testDetectsUseOfBacktickOperator(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/shell_exec.php'], [
+            ['Tainted value from $_GET is passed to the backtick operator', 7],
+            ['Tainted value from $_GET is passed to the backtick operator', 13],
         ]);
     }
 

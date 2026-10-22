@@ -51,7 +51,7 @@ final readonly class SinkCollector implements Collector
         }
 
         return [
-            'sink' => $functionName,
+            'sink' => sprintf('%s()', $functionName),
             'sources' => $this->expressionFlattener->flatten($arg->value, $scope),
             'line' => $node->getStartLine(),
         ];

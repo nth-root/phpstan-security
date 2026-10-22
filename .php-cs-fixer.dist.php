@@ -18,4 +18,5 @@ return (new Config())
             // 💡 root folder to check
             ->in(__DIR__)
             ->ignoreDotFiles(false)
+            ->exclude('tests/Rules/data')
     );

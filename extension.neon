@@ -1,6 +1,9 @@
 services:
     - NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener
     -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector
+        tags: [phpstan.collector]
+    -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SinkCollector
         tags: [phpstan.collector]
     -
