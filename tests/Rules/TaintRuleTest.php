@@ -72,6 +72,19 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsThroughTernaryConditions(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/conditional.php'], [
+            [$this->getMessage('$_GET', 'exec'), 7],
+            [$this->getMessage('$_GET', 'exec'), 8],
+            [$this->getMessage('$_GET', 'exec'), 9],
+            [$this->getMessage('$_GET', 'exec'), 10],
+            [$this->getMessage('$_GET', 'exec'), 12],
+            [$this->getMessage('$_POST, $_GET', 'exec'), 13],
+            [$this->getMessage('$_GET', 'exec'), 19],
+        ]);
+    }
+
     public function testDetectsShellFunctions(): void
     {
         $this->analyse([__DIR__ . '/data/taint/shell_functions.php'], [

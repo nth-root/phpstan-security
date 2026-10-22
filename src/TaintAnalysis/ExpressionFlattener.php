@@ -6,7 +6,9 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
+use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Concat;
+use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
@@ -37,6 +39,14 @@ final readonly class ExpressionFlattener
 
         if ($expr instanceof Concat) {
             return [...$this->flatten($expr->left, $scope), ...$this->flatten($expr->right, $scope)];
+        }
+
+        if ($expr instanceof Coalesce) {
+            return [...$this->flatten($expr->left, $scope), ...$this->flatten($expr->right, $scope)];
+        }
+
+        if ($expr instanceof Ternary) {
+            return [...$this->flatten($expr->if ?? $expr->cond, $scope), ...$this->flatten($expr->else, $scope)];
         }
 
         if ($expr instanceof InterpolatedString) {
