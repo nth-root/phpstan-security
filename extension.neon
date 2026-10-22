@@ -14,6 +14,9 @@ services:
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector
         tags: [phpstan.collector]
     -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector
+        tags: [phpstan.collector]
+    -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector
         tags: [phpstan.collector]
     -

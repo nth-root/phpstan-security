@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ExtendedMethodReflection;
 use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
@@ -42,7 +45,7 @@ final readonly class CallArguments
             return [];
         }
 
-        return $this->select($parametersAcceptor, $normalizedCall, $parameterNames);
+        return $this->select($parametersAcceptor, $normalizedCall->getArgs(), $parameterNames);
     }
 
     /**
@@ -50,13 +53,40 @@ final readonly class CallArguments
      *
      * @return Expr[]
      */
+    public function ofMethodCall(
+        MethodCall $call,
+        ExtendedMethodReflection $method,
+        Scope $scope,
+        array $parameterNames
+    ): array {
+        $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs(
+            $scope,
+            $call->getArgs(),
+            $method->getVariants(),
+            $method->getNamedArgumentsVariants()
+        );
+
+        $args = ArgumentsNormalizer::reorderArgs($parametersAcceptor, $call->getArgs());
+
+        if ($args === null) {
+            return [];
+        }
+
+        return $this->select($parametersAcceptor, $args, $parameterNames);
+    }
+
+    /**
+     * @param string[] $parameterNames
+     * @param Arg[]    $args
+     *
+     * @return Expr[]
+     */
     private function select(
         ParametersAcceptor $parametersAcceptor,
-        FuncCall $normalizedCall,
+        array $args,
         array $parameterNames
     ): array {
         $selected = [];
-        $args = $normalizedCall->getArgs();
 
         foreach ($parametersAcceptor->getParameters() as $position => $parameter) {
             if (!in_array($parameter->getName(), $parameterNames, true)) {
