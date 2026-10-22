@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NthRoot\PhpstanSecurity\Tests\Rules;
 
 use NthRoot\PhpstanSecurity\Rules\TaintRule;
+use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
@@ -41,10 +42,11 @@ class TaintRuleTest extends RuleTestCase
 
     protected function getCollectors(): array
     {
-        $expressionFlattener = new ExpressionFlattener($this->reflectionProvider);
+        $callArguments = new CallArguments($this->reflectionProvider);
+        $expressionFlattener = new ExpressionFlattener($this->reflectionProvider, $callArguments);
 
         return [
-            new FunctionCallSinkCollector($this->reflectionProvider, $expressionFlattener),
+            new FunctionCallSinkCollector($this->reflectionProvider, $expressionFlattener, $callArguments),
             new AssignmentCollector($expressionFlattener),
             new CompoundAssignmentCollector($expressionFlattener),
             new ShellExecSinkCollector($expressionFlattener),
@@ -58,6 +60,7 @@ class TaintRuleTest extends RuleTestCase
         $this->analyse([__DIR__ . '/data/taint/direct.php'], [
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 9],
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 13],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 16],
         ]);
     }
 
@@ -156,6 +159,8 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 13],
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 14],
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 18],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 23],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 24],
         ]);
     }
 

@@ -17,3 +17,10 @@ function cases(): void
     $cmd = trim($_GET['cmd']);
     exec($cmd); // unsafe
 }
+
+function namedArguments(): void
+{
+    exec(trim(string: $_GET['cmd'])); // unsafe
+    exec(str_replace(subject: $_GET['cmd'], search: 'a', replace: 'b')); // unsafe
+    exec(str_replace(subject: 'ls', search: $_GET['x'], replace: 'b')); // safe (search)
+}

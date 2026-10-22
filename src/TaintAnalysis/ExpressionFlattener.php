@@ -16,7 +16,6 @@ use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 
-use function array_key_exists;
 use function in_array;
 use function is_string;
 
@@ -24,22 +23,19 @@ final readonly class ExpressionFlattener
 {
     private const SUPERGLOBALS = ['_GET', '_POST', '_REQUEST', '_COOKIE'];
 
-    /**
-     * Parameter name => position for arguments that end up in the return value. Null: all arguments.
-     */
     private const PASS_THROUGH_FUNCTIONS = [
-        'trim' => ['string' => 0],
-        'ltrim' => ['string' => 0],
-        'rtrim' => ['string' => 0],
-        'strtolower' => ['string' => 0],
-        'strtoupper' => ['string' => 0],
-        'str_replace' => ['replace' => 1, 'subject' => 2],
-        'sprintf' => null,
-        'implode' => ['separator' => 0, 'array' => 1],
-        'explode' => ['string' => 1],
+        'trim' => ['string'],
+        'ltrim' => ['string'],
+        'rtrim' => ['string'],
+        'strtolower' => ['string'],
+        'strtoupper' => ['string'],
+        'str_replace' => ['replace', 'subject'],
+        'sprintf' => ['format', 'values'],
+        'implode' => ['separator', 'array'],
+        'explode' => ['string'],
     ];
 
-    public function __construct(private ReflectionProvider $reflectionProvider) {}
+    public function __construct(private ReflectionProvider $reflectionProvider, private CallArguments $callArguments) {}
 
     /**
      * @return string[]
@@ -96,30 +92,14 @@ final readonly class ExpressionFlattener
     {
         $functionName = $this->reflectionProvider->resolveFunctionName($name, $scope);
 
-        if ($functionName === null || !array_key_exists($functionName, self::PASS_THROUGH_FUNCTIONS)) {
+        if ($functionName === null || !isset(self::PASS_THROUGH_FUNCTIONS[$functionName])) {
             return [];
-        }
-
-        $parameters = self::PASS_THROUGH_FUNCTIONS[$functionName];
-
-        if ($parameters === null) {
-            $args = $call->getArgs();
-        } else {
-            $args = [];
-
-            foreach ($parameters as $parameter => $position) {
-                $arg = $call->getArg($parameter, $position);
-
-                if ($arg !== null) {
-                    $args[] = $arg;
-                }
-            }
         }
 
         $nodes = [];
 
-        foreach ($args as $arg) {
-            $nodes = [...$nodes, ...$this->flatten($arg->value, $scope)];
+        foreach ($this->callArguments->ofFunctionCall($call, $name, $scope, self::PASS_THROUGH_FUNCTIONS[$functionName]) as $arg) {
+            $nodes = [...$nodes, ...$this->flatten($arg, $scope)];
         }
 
         return $nodes;

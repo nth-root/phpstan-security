@@ -13,4 +13,5 @@ function cases(): void
     exec(output: $out, command: $_GET['cmd']); // unsafe
     exec(); // safe
     exec(command: 'ls', output: $_GET['x']); // safe
+    exec(...$_GET['args']); // unsafe (unpacked argument)
 }

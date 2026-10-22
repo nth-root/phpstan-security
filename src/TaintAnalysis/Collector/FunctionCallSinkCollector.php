@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector;
 
+use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use PhpParser\Node;
@@ -21,20 +22,21 @@ use function sprintf;
 final readonly class FunctionCallSinkCollector implements Collector
 {
     private const UNSAFE_FUNCTIONS = [
-        'exec' => ['parameter' => 'command', 'type' => SinkType::Shell],
-        'system' => ['parameter' => 'command', 'type' => SinkType::Shell],
-        'shell_exec' => ['parameter' => 'command', 'type' => SinkType::Shell],
-        'passthru' => ['parameter' => 'command', 'type' => SinkType::Shell],
-        'proc_open' => ['parameter' => 'command', 'type' => SinkType::Shell],
-        'popen' => ['parameter' => 'command', 'type' => SinkType::Shell],
-        'pcntl_exec' => ['parameter' => 'path', 'type' => SinkType::Shell],
-        'printf' => ['parameter' => null, 'type' => SinkType::Html],
-        'vprintf' => ['parameter' => null, 'type' => SinkType::Html],
+        'exec' => ['parameters' => ['command'], 'type' => SinkType::Shell],
+        'system' => ['parameters' => ['command'], 'type' => SinkType::Shell],
+        'shell_exec' => ['parameters' => ['command'], 'type' => SinkType::Shell],
+        'passthru' => ['parameters' => ['command'], 'type' => SinkType::Shell],
+        'proc_open' => ['parameters' => ['command'], 'type' => SinkType::Shell],
+        'popen' => ['parameters' => ['command'], 'type' => SinkType::Shell],
+        'pcntl_exec' => ['parameters' => ['path'], 'type' => SinkType::Shell],
+        'printf' => ['parameters' => ['format', 'values'], 'type' => SinkType::Html],
+        'vprintf' => ['parameters' => ['format', 'values'], 'type' => SinkType::Html],
     ];
 
     public function __construct(
         private ReflectionProvider $reflectionProvider,
-        private ExpressionFlattener $expressionFlattener
+        private ExpressionFlattener $expressionFlattener,
+        private CallArguments $callArguments
     ) {}
 
     public function getNodeType(): string
@@ -60,22 +62,10 @@ final readonly class FunctionCallSinkCollector implements Collector
 
         $unsafeFunction = self::UNSAFE_FUNCTIONS[$functionName];
 
-        if ($unsafeFunction['parameter'] === null) {
-            $args = $node->getArgs();
-        } else {
-            $arg = $node->getArg($unsafeFunction['parameter'], 0);
-
-            if ($arg === null) {
-                return null;
-            }
-
-            $args = [$arg];
-        }
-
         $sources = [];
 
-        foreach ($args as $arg) {
-            $sources = [...$sources, ...$this->expressionFlattener->flatten($arg->value, $scope)];
+        foreach ($this->callArguments->ofFunctionCall($node, $node->name, $scope, $unsafeFunction['parameters']) as $arg) {
+            $sources = [...$sources, ...$this->expressionFlattener->flatten($arg, $scope)];
         }
 
         return [
