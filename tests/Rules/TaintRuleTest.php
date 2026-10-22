@@ -12,6 +12,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
+use Override;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -23,6 +24,15 @@ use function sprintf;
  */
 class TaintRuleTest extends RuleTestCase
 {
+    private ReflectionProvider $reflectionProvider;
+
+    #[Override]
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->reflectionProvider = self::getContainer()->getByType(ReflectionProvider::class);
+    }
+
     protected function getRule(): Rule
     {
         return new TaintRule();
@@ -30,10 +40,10 @@ class TaintRuleTest extends RuleTestCase
 
     protected function getCollectors(): array
     {
-        $expressionFlattener = new ExpressionFlattener();
+        $expressionFlattener = new ExpressionFlattener($this->reflectionProvider);
 
         return [
-            new FunctionCallSinkCollector(self::getContainer()->getByType(ReflectionProvider::class), $expressionFlattener),
+            new FunctionCallSinkCollector($this->reflectionProvider, $expressionFlattener),
             new AssignmentCollector($expressionFlattener),
             new ShellExecSinkCollector($expressionFlattener),
             new EchoSinkCollector($expressionFlattener),
@@ -131,6 +141,19 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Html, '$_GET', 'printf()'), 11],
             [$this->getMessage(SinkType::Html, '$_GET', 'vprintf()'), 12],
             [$this->getMessage(SinkType::Html, '$_GET', 'vprintf()'), 13],
+        ]);
+    }
+
+    public function testDetectsThroughPassThroughFunctions(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/passthrough.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 7],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 9],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 10],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 12],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 13],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 14],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 18],
         ]);
     }
 
