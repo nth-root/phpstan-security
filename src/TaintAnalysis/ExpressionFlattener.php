@@ -16,7 +16,7 @@ use function is_string;
 
 final readonly class ExpressionFlattener
 {
-    private const SUPERGLOBALS = ['_GET', '_POST'];
+    private const SUPERGLOBALS = ['_GET', '_POST', '_REQUEST', '_COOKIE'];
 
     /**
      * @return string[]
