@@ -12,7 +12,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 
 /**
- * @implements Collector<ShellExec, array{sink: string, sources: string[], line: int}
+ * @implements Collector<ShellExec, array{sink: string, sources: string[], line: int}>
  */
 final readonly class ShellExecSinkCollector implements Collector
 {
@@ -23,7 +23,7 @@ final readonly class ShellExecSinkCollector implements Collector
         return ShellExec::class;
     }
 
-    public function processNode(Node $node, Scope $scope): ?array
+    public function processNode(Node $node, Scope $scope): array
     {
         $sources = [];
 

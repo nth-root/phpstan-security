@@ -48,7 +48,7 @@ final readonly class FunctionCallSinkCollector implements Collector
 
         $functionName = $this->reflectionProvider->resolveFunctionName($node->name, $scope);
 
-        if (!isset(self::UNSAFE_FUNCTIONS[$functionName])) {
+        if ($functionName === null || !isset(self::UNSAFE_FUNCTIONS[$functionName])) {
             return null;
         }
 
