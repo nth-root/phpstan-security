@@ -40,76 +40,76 @@ class TaintRuleTest extends RuleTestCase
     public function testDetectsDirectUseOfTaintedValue(): void
     {
         $this->analyse([__DIR__ . '/data/taint/direct.php'], [
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 9],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 13],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 9],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 13],
         ]);
     }
 
     public function testDetectsThroughLocalVariables(): void
     {
         $this->analyse([__DIR__ . '/data/taint/variables.php'], [
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 8],
-            [$this->getMessage(SinkType::Shell, '$_POST', 'system'), 21],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 8],
+            [$this->getMessage(SinkType::Shell, '$_POST', 'system()'), 21],
         ]);
     }
 
     public function testDetectsThroughConcatenation(): void
     {
         $this->analyse([__DIR__ . '/data/taint/concatenation.php'], [
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 7],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 13],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 19],
-            [$this->getMessage(SinkType::Shell, '$_POST, $_GET', 'exec'), 29],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 34],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 7],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 13],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 19],
+            [$this->getMessage(SinkType::Shell, '$_POST, $_GET', 'exec()'), 29],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 34],
         ]);
     }
 
     public function testDetectsThroughInterpolation(): void
     {
         $this->analyse([__DIR__ . '/data/taint/interpolation.php'], [
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 8],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 9],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 16],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 8],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 9],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 16],
         ]);
     }
 
     public function testDetectsThroughTernaryConditions(): void
     {
         $this->analyse([__DIR__ . '/data/taint/conditional.php'], [
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 7],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 8],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 9],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 10],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 12],
-            [$this->getMessage(SinkType::Shell, '$_POST, $_GET', 'exec'), 13],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'exec'), 19],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 7],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 8],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 9],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 10],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 12],
+            [$this->getMessage(SinkType::Shell, '$_POST, $_GET', 'exec()'), 13],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 19],
         ]);
     }
 
     public function testDetectsShellFunctions(): void
     {
         $this->analyse([__DIR__ . '/data/taint/shell_functions.php'], [
-            [$this->getMessage(SinkType::Shell, '$_GET', 'shell_exec'), 7],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'passthru'), 8],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'popen'), 9],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'proc_open'), 10],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec'), 11],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec'), 12],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'shell_exec()'), 7],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'passthru()'), 8],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'popen()'), 9],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'proc_open()'), 10],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec()'), 11],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec()'), 12],
         ]);
     }
 
     public function testDetectsUseOfBacktickOperator(): void
     {
         $this->analyse([__DIR__ . '/data/taint/shell_exec.php'], [
-            ['Possible command injection: tainted value from $_GET is passed to the backtick operator', 7],
-            ['Possible command injection: tainted value from $_GET is passed to the backtick operator', 13],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'the backtick operator'), 7],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'the backtick operator'), 13],
         ]);
     }
 
     private function getMessage(SinkType $sinkType, string $source, string $sink): string
     {
         return sprintf(
-            'Possible %s: tainted value from %s is passed to %s()',
+            'Possible %s: tainted value from %s is passed to %s',
             $sinkType->describe(),
             $source,
             $sink
