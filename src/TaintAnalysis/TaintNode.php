@@ -6,7 +6,6 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
 use function explode;
 use function implode;
-use function sprintf;
 use function strrpos;
 use function substr;
 
@@ -44,7 +43,7 @@ final readonly class TaintNode
     public function describe(): string
     {
         return match ($this->kind) {
-            NodeKind::Source => sprintf('$%s', $this->name),
+            NodeKind::Source => $this->name,
             NodeKind::Variable => substr($this->name, strrpos($this->name, ':') + 1),
         };
     }

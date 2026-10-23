@@ -9,12 +9,15 @@ use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\TypeCombinator;
 
 use function in_array;
 use function is_string;
@@ -35,6 +38,14 @@ final readonly class ExpressionFlattener
         'explode' => ['string'],
     ];
 
+    private const SOURCE_METHODS = [
+        'Symfony\Component\HttpFoundation\Request' => [
+            'get' => 'Request::get()',
+            'getcontent' => 'Request::getContent()',
+            'toarray' => 'Request::toArray()',
+        ],
+    ];
+
     public function __construct(private ReflectionProvider $reflectionProvider, private CallArguments $callArguments) {}
 
     /**
@@ -43,7 +54,7 @@ final readonly class ExpressionFlattener
     public function flatten(Expr $expr, Scope $scope): array
     {
         if ($expr instanceof Variable && is_string($expr->name) && in_array($expr->name, self::SUPERGLOBALS, true)) {
-            return [TaintNode::source($expr->name)->toString()];
+            return [TaintNode::source('$' . $expr->name)->toString()];
         }
 
         if ($expr instanceof Variable && is_string($expr->name)) {
@@ -82,6 +93,10 @@ final readonly class ExpressionFlattener
             return $this->flattenFunctionCall($expr, $expr->name, $scope);
         }
 
+        if ($expr instanceof MethodCall && $expr->name instanceof Identifier && !$expr->isFirstClassCallable()) {
+            return $this->flattenMethodCall($expr, $expr->name, $scope);
+        }
+
         return [];
     }
 
@@ -100,6 +115,27 @@ final readonly class ExpressionFlattener
 
         foreach ($this->callArguments->ofFunctionCall($call, $name, $scope, self::PASS_THROUGH_FUNCTIONS[$functionName]) as $arg) {
             $nodes = [...$nodes, ...$this->flatten($arg, $scope)];
+        }
+
+        return $nodes;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function flattenMethodCall(MethodCall $call, Identifier $name, Scope $scope): array
+    {
+        $methodName = $name->toLowerString();
+        $receiverType = TypeCombinator::removeNull($scope->getType($call->var));
+
+        $nodes = [];
+
+        foreach ($receiverType->getObjectClassReflections() as $class) {
+            foreach (self::SOURCE_METHODS as $className => $sourceMethods) {
+                if (isset($sourceMethods[$methodName]) && $class->is($className)) {
+                    $nodes[] = TaintNode::source($sourceMethods[$methodName])->toString();
+                }
+            }
         }
 
         return $nodes;

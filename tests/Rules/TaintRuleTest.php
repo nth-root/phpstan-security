@@ -291,6 +291,18 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsSymfonyRequestSources(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/symfony_request.php'], [
+            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 19],
+            [$this->getMessage(SinkType::Shell, 'Request::getContent()', 'exec()'), 20],
+            [$this->getMessage(SinkType::Shell, 'Request::toArray()', 'exec()'), 21],
+            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 24],
+            [$this->getMessage(SinkType::Shell, '$_GET, Request::get()', 'exec()'), 26],
+            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 27],
+        ]);
+    }
+
     public function testFollowsArgumentsAcrossFiles(): void
     {
         $this->analyse([
