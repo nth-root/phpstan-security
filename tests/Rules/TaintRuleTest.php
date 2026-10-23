@@ -215,6 +215,33 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsMysqliSinks(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/mysqli.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_query()'), 7],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_real_query()'), 8],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_multi_query()'), 9],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_prepare()'), 10],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_execute_query()'), 11],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_query()'), 12],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::query()'), 17],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::real_query()'), 18],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::multi_query()'), 19],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::prepare()'), 20],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::execute_query()'), 21],
+        ]);
+    }
+
+    public function testDetectsSqlite3Sinks(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/sqlite3.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::query()'), 7],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::exec()'), 8],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::querySingle()'), 9],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::prepare()'), 10],
+        ]);
+    }
+
     private function getMessage(SinkType $sinkType, string $source, string $sink): string
     {
         return sprintf(

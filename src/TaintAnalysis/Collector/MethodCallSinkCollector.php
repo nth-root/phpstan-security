@@ -25,6 +25,19 @@ final readonly class MethodCallSinkCollector implements Collector
             'exec' => ['parameters' => ['statement'], 'type' => SinkType::Sql],
             'prepare' => ['parameters' => ['query'], 'type' => SinkType::Sql],
         ],
+        'mysqli' => [
+            'query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'real_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'multi_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'prepare' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'execute_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+        ],
+        'SQLite3' => [
+            'query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'exec' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'querysingle' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'prepare' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+        ],
         'Doctrine\DBAL\Connection' => [
             'executequery' => ['parameters' => ['sql'], 'type' => SinkType::Sql],
             'executestatement' => ['parameters' => ['sql'], 'type' => SinkType::Sql],

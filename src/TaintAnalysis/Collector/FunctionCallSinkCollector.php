@@ -31,6 +31,11 @@ final readonly class FunctionCallSinkCollector implements Collector
         'pcntl_exec' => ['parameters' => ['path'], 'type' => SinkType::Shell],
         'printf' => ['parameters' => ['format', 'values'], 'type' => SinkType::Html],
         'vprintf' => ['parameters' => ['format', 'values'], 'type' => SinkType::Html],
+        'mysqli_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+        'mysqli_real_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+        'mysqli_multi_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+        'mysqli_prepare' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+        'mysqli_execute_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
     ];
 
     public function __construct(
