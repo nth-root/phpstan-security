@@ -258,12 +258,16 @@ class TaintRuleTest extends RuleTestCase
     public function testDetectsSymfonyRequestSources(): void
     {
         $this->analyse([__DIR__ . '/data/taint/symfony_request.php'], [
-            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 19],
-            [$this->getMessage(SinkType::Shell, 'Request::getContent()', 'exec()'), 20],
-            [$this->getMessage(SinkType::Shell, 'Request::toArray()', 'exec()'), 21],
-            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 24],
-            [$this->getMessage(SinkType::Shell, '$_GET, Request::get()', 'exec()'), 26],
-            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 27],
+            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 20],
+            [$this->getMessage(SinkType::Shell, 'Request::getContent()', 'exec()'), 21],
+            [$this->getMessage(SinkType::Shell, 'Request::toArray()', 'exec()'), 22],
+            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 25],
+            [$this->getMessage(SinkType::Shell, '$_GET, Request::get()', 'exec()'), 27],
+            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 28],
+            [$this->getMessage(SinkType::Shell, 'InputBag::get()', 'exec()'), 39],
+            [$this->getMessage(SinkType::Shell, 'HeaderBag::get()', 'exec()'), 40],
+            [$this->getMessage(SinkType::Shell, 'InputBag::all()', 'exec()'), 41],
+            [$this->getMessage(SinkType::Shell, 'InputBag::get()', 'exec()'), 42],
         ]);
     }
 

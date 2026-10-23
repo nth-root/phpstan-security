@@ -3,3 +3,5 @@ parameters:
         sources:
             methods:
                 Symfony\Component\HttpFoundation\Request: [get, getContent, toArray]
+                Symfony\Component\HttpFoundation\InputBag: [get, all, keys, getString, filter]
+                Symfony\Component\HttpFoundation\HeaderBag: [get, all, keys]
