@@ -9,6 +9,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
@@ -54,6 +55,7 @@ class TaintRuleTest extends RuleTestCase
             new ShellExecSinkCollector($expressionFlattener),
             new EchoSinkCollector($expressionFlattener),
             new PrintSinkCollector($expressionFlattener),
+            new IncludeSinkCollector($expressionFlattener),
         ];
     }
 
@@ -239,6 +241,18 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::exec()'), 8],
             [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::querySingle()'), 9],
             [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::prepare()'), 10],
+        ]);
+    }
+
+    public function testDetectsFileInclusion(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/include.php'], [
+            [$this->getMessage(SinkType::FileInclusion, '$_GET', 'include'), 7],
+            [$this->getMessage(SinkType::FileInclusion, '$_GET', 'include_once'), 8],
+            [$this->getMessage(SinkType::FileInclusion, '$_GET', 'require'), 9],
+            [$this->getMessage(SinkType::FileInclusion, '$_GET', 'require_once'), 10],
+            [$this->getMessage(SinkType::FileInclusion, '$_GET', 'include'), 11],
+            [$this->getMessage(SinkType::FileInclusion, '$_GET', 'include'), 12],
         ]);
     }
 

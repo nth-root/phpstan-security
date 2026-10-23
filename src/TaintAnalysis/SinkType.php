@@ -9,6 +9,7 @@ enum SinkType: string
     case Sql = 'sql';
     case Html = 'html';
     case Shell = 'shell';
+    case FileInclusion = 'include';
 
     public function identifier(): string
     {
@@ -21,6 +22,7 @@ enum SinkType: string
             self::Sql => 'SQL injection',
             self::Html => 'cross-site scripting',
             self::Shell => 'command injection',
+            self::FileInclusion => 'file inclusion',
         };
     }
 }
