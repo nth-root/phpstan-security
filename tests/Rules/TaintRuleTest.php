@@ -191,6 +191,30 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsDoctrineDbalSinks(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/dbal.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::executeQuery()'), 9],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::executeStatement()'), 10],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::prepare()'), 11],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::executeQuery()'), 12],
+
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAssociative()'), 17],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchNumeric()'), 18],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchOne()'), 19],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllNumeric()'), 20],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllAssociative()'), 21],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllKeyValue()'), 22],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllAssociativeIndexed()'), 23],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchFirstColumn()'), 24],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateNumeric()'), 25],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateAssociative()'), 26],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateKeyValue()'), 27],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateAssociativeIndexed()'), 28],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateColumn()'), 29],
+        ]);
+    }
+
     private function getMessage(SinkType $sinkType, string $source, string $sink): string
     {
         return sprintf(

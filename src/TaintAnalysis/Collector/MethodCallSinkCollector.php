@@ -25,6 +25,24 @@ final readonly class MethodCallSinkCollector implements Collector
             'exec' => ['parameters' => ['statement'], 'type' => SinkType::Sql],
             'prepare' => ['parameters' => ['query'], 'type' => SinkType::Sql],
         ],
+        'Doctrine\DBAL\Connection' => [
+            'executequery' => ['parameters' => ['sql'], 'type' => SinkType::Sql],
+            'executestatement' => ['parameters' => ['sql'], 'type' => SinkType::Sql],
+            'prepare' => ['parameters' => ['sql'], 'type' => SinkType::Sql],
+            'fetchassociative' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'fetchnumeric' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'fetchone' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'fetchallnumeric' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'fetchallassociative' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'fetchallkeyvalue' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'fetchallassociativeindexed' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'fetchfirstcolumn' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'iteratenumeric' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'iterateassociative' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'iteratekeyvalue' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'iterateassociativeindexed' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+            'iteratecolumn' => ['parameters' => ['query'], 'type' => SinkType::Sql],
+        ],
     ];
 
     public function __construct(private ExpressionFlattener $expressionFlattener, private CallArguments $callArguments) {}
