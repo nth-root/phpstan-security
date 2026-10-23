@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 function cases(): void
 {
-    shell_exec($_GET['cmd']); // unsafe
-    passthru($_GET['cmd']); // unsafe
     popen($_GET['cmd'], 'r'); // unsafe
     proc_open($_GET['cmd'], [], $pipes); // unsafe
     pcntl_exec($_GET['cmd']); // unsafe

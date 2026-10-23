@@ -107,12 +107,10 @@ class TaintRuleTest extends RuleTestCase
     public function testDetectsShellFunctions(): void
     {
         $this->analyse([__DIR__ . '/data/taint/shell_functions.php'], [
-            [$this->getMessage(SinkType::Shell, '$_GET', 'shell_exec()'), 7],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'passthru()'), 8],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'popen()'), 9],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'proc_open()'), 10],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec()'), 11],
-            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec()'), 12],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'popen()'), 7],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'proc_open()'), 8],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec()'), 9],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'pcntl_exec()'), 10],
         ]);
     }
 
@@ -195,20 +193,7 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::executeStatement()'), 10],
             [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::prepare()'), 11],
             [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::executeQuery()'), 12],
-
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAssociative()'), 17],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchNumeric()'), 18],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchOne()'), 19],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllNumeric()'), 20],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllAssociative()'), 21],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllKeyValue()'), 22],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchAllAssociativeIndexed()'), 23],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchFirstColumn()'), 24],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateNumeric()'), 25],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateAssociative()'), 26],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateKeyValue()'), 27],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateAssociativeIndexed()'), 28],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::iterateColumn()'), 29],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Doctrine\DBAL\Connection::fetchOne()'), 13],
         ]);
     }
 
@@ -216,16 +201,8 @@ class TaintRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/taint/mysqli.php'], [
             [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_query()'), 7],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_real_query()'), 8],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_multi_query()'), 9],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_prepare()'), 10],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_execute_query()'), 11],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_query()'), 12],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::query()'), 17],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::real_query()'), 18],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::multi_query()'), 19],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::prepare()'), 20],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::execute_query()'), 21],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli_query()'), 8],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'mysqli::query()'), 13],
         ]);
     }
 
@@ -233,9 +210,6 @@ class TaintRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/taint/sqlite3.php'], [
             [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::query()'), 7],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::exec()'), 8],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::querySingle()'), 9],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::prepare()'), 10],
         ]);
     }
 

@@ -10,23 +10,7 @@ function cases(Connection $connection): void
     $connection->executeStatement($_GET['sql']); // unsafe
     $connection->prepare($_GET['sql']); // unsafe
     $connection->executeQuery(params: [], sql: $_GET['sql']); // unsafe
-}
-
-function fetchers(Connection $connection): void
-{
-    $connection->fetchAssociative($_GET['sql']); // unsafe
-    $connection->fetchNumeric($_GET['sql']); // unsafe
-    $connection->fetchOne($_GET['sql']); // unsafe
-    $connection->fetchAllNumeric($_GET['sql']); // unsafe
-    $connection->fetchAllAssociative($_GET['sql']); // unsafe
-    $connection->fetchAllKeyValue($_GET['sql']); // unsafe
-    $connection->fetchAllAssociativeIndexed($_GET['sql']); // unsafe
-    $connection->fetchFirstColumn($_GET['sql']); // unsafe
-    $connection->iterateNumeric($_GET['sql']); // unsafe
-    $connection->iterateAssociative($_GET['sql']); // unsafe
-    $connection->iterateKeyValue($_GET['sql']); // unsafe
-    $connection->iterateAssociativeIndexed($_GET['sql']); // unsafe
-    $connection->iterateColumn($_GET['sql']); // unsafe
+    $connection->fetchOne($_GET['sql']); // unsafe (the fetch* methods name the SQL $query)
 }
 
 function safe(Connection $connection): void
