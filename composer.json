@@ -20,7 +20,10 @@
     "autoload-dev": {
         "psr-4": {
             "NthRoot\\PhpstanSecurity\\Tests\\": "tests/"
-        }
+        },
+        "classmap": [
+            "tests/Rules/data/"
+        ]
     },
     "config": {
         "sort-packages": true

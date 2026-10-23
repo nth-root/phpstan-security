@@ -178,13 +178,16 @@ class TaintRuleTest extends RuleTestCase
     public function testDetectsMethodCallSinks(): void
     {
         $this->analyse([__DIR__ . '/data/taint/method_calls.php'], [
-            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 7],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::exec()'), 8],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::prepare()'), 9],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::prepare()'), 10],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 11],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 12],
-            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 13],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 21],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 27],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::exec()'), 28],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::prepare()'), 29],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::prepare()'), 30],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 31],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 32],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 33],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 46],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'OverridingSubclass::exec()'), 47],
         ]);
     }
 
