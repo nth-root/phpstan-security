@@ -6,15 +6,17 @@ namespace NthRoot\PhpstanSecurity\Tests\Rules;
 
 use NthRoot\PhpstanSecurity\Rules\TaintRule;
 use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Callees;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CallArgumentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
-use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use Override;
@@ -54,6 +56,7 @@ class TaintRuleTest extends RuleTestCase
             new HeaderSinkCollector($this->reflectionProvider, $expressionFlattener, $callArguments),
             new AssignmentCollector($expressionFlattener),
             new CompoundAssignmentCollector($expressionFlattener),
+            new CallArgumentCollector(new Callees($this->reflectionProvider), $callArguments, $expressionFlattener),
             new ShellExecSinkCollector($expressionFlattener),
             new EchoSinkCollector($expressionFlattener),
             new PrintSinkCollector($expressionFlattener),
@@ -268,6 +271,33 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 11],
             [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 12],
             [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 15],
+        ]);
+    }
+
+    public function testFollowsArgumentsIntoParameters(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/arguments.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 7],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 17],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 22],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 28],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 44],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 49],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 54],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 64],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 74],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 87],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 95],
+        ]);
+    }
+
+    public function testFollowsArgumentsAcrossFiles(): void
+    {
+        $this->analyse([
+            __DIR__ . '/data/taint/arguments_controller.php',
+            __DIR__ . '/data/taint/arguments_repository.php',
+        ], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 11],
         ]);
     }
 

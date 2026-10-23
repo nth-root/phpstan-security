@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ExtendedMethodReflection;
 
 final readonly class FunctionKey
 {
@@ -26,5 +27,10 @@ final readonly class FunctionKey
         }
 
         return $class->getName() . '::' . $function->getName();
+    }
+
+    public static function ofMethod(ExtendedMethodReflection $method): string
+    {
+        return $method->getDeclaringClass()->getName() . '::' . $method->getName();
     }
 }

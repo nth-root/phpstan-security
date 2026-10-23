@@ -1,6 +1,7 @@
 services:
     - NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener
     - NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments
+    - NthRoot\PhpstanSecurity\TaintAnalysis\Callees
     -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector
         tags: [phpstan.collector]
@@ -24,6 +25,9 @@ services:
         tags: [phpstan.collector]
     -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector
+        tags: [phpstan.collector]
+    -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CallArgumentCollector
         tags: [phpstan.collector]
     -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector

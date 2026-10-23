@@ -6,6 +6,7 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name;
@@ -73,6 +74,51 @@ final readonly class CallArguments
         }
 
         return $this->select($parametersAcceptor, $args, $parameterNames);
+    }
+
+    /**
+     * @param ParametersAcceptor[]      $variants
+     * @param ParametersAcceptor[]|null $namedArgumentsVariants
+     *
+     * @return array<string, Expr[]> parameter name => the arguments passed to it
+     */
+    public function byParameter(CallLike $call, Scope $scope, array $variants, ?array $namedArgumentsVariants): array
+    {
+        $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs(
+            $scope,
+            $call->getArgs(),
+            $variants,
+            $namedArgumentsVariants
+        );
+
+        $args = ArgumentsNormalizer::reorderArgs($parametersAcceptor, $call->getArgs());
+
+        if ($args === null) {
+            return [];
+        }
+
+        $parameters = $parametersAcceptor->getParameters();
+        $byParameter = [];
+
+        foreach ($parameters as $position => $parameter) {
+            $length = $parameter->isVariadic() ? null : 1;
+
+            foreach (array_slice($args, $position, $length) as $arg) {
+                $byParameter[$parameter->getName()][] = $arg->value;
+            }
+        }
+
+        foreach ($args as $position => $arg) {
+            if (!$arg->unpack) {
+                continue;
+            }
+
+            foreach (array_slice($parameters, $position + 1) as $parameter) {
+                $byParameter[$parameter->getName()][] = $arg->value;
+            }
+        }
+
+        return $byParameter;
     }
 
     /**
