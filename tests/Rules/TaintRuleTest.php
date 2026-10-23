@@ -281,6 +281,15 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsFileAccess(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/file.php'], [
+            [$this->getMessage(SinkType::FilePath, '$_GET', 'file_get_contents()'), 7],
+            [$this->getMessage(SinkType::FilePath, '$_GET', 'file_get_contents()'), 8],
+            [$this->getMessage(SinkType::FilePath, '$_GET', 'copy()'), 9],
+        ]);
+    }
+
     private function getMessage(SinkType $sinkType, string $source, string $sink): string
     {
         return sprintf(

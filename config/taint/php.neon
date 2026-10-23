@@ -32,6 +32,15 @@ parameters:
                 mysqli_multi_query: {type: sql, parameters: [query]}
                 mysqli_prepare: {type: sql, parameters: [query]}
                 mysqli_execute_query: {type: sql, parameters: [query]}
+                file_get_contents: {type: path, parameters: [filename]}
+                file_put_contents: {type: path, parameters: [filename]}
+                fopen: {type: path, parameters: [filename]}
+                file: {type: path, parameters: [filename]}
+                readfile: {type: path, parameters: [filename]}
+                parse_ini_file: {type: path, parameters: [filename]}
+                unlink: {type: path, parameters: [filename]}
+                copy: {type: path, parameters: [from, to]}
+                rename: {type: path, parameters: [from, to]}
 
             methods:
                 PDO:

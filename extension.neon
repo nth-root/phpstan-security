@@ -14,11 +14,11 @@ parametersSchema:
         ]),
         sinks: structure([
             functions: arrayOf(structure([
-                type: anyOf('sql', 'html', 'shell', 'include', 'redirect'),
+                type: anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect'),
                 parameters: listOf(string()),
             ])),
             methods: arrayOf(arrayOf(structure([
-                type: anyOf('sql', 'html', 'shell', 'include', 'redirect'),
+                type: anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect'),
                 parameters: listOf(string()),
             ]))),
         ]),
