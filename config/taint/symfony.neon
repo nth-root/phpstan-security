@@ -1,0 +1,5 @@
+parameters:
+    taint:
+        sources:
+            methods:
+                Symfony\Component\HttpFoundation\Request: [get, getContent, toArray]

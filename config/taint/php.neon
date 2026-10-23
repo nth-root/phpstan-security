@@ -1,0 +1,51 @@
+parameters:
+    taint:
+        sources:
+            variables: [_GET, _POST, _REQUEST, _COOKIE]
+            methods: []
+
+        flows:
+            functions:
+                trim: [string]
+                ltrim: [string]
+                rtrim: [string]
+                strtolower: [string]
+                strtoupper: [string]
+                str_replace: [replace, subject]
+                sprintf: [format, values]
+                implode: [separator, array]
+                explode: [string]
+
+        sinks:
+            functions:
+                exec: {type: shell, parameters: [command]}
+                system: {type: shell, parameters: [command]}
+                shell_exec: {type: shell, parameters: [command]}
+                passthru: {type: shell, parameters: [command]}
+                proc_open: {type: shell, parameters: [command]}
+                popen: {type: shell, parameters: [command]}
+                pcntl_exec: {type: shell, parameters: [path]}
+                printf: {type: html, parameters: [format, values]}
+                vprintf: {type: html, parameters: [format, values]}
+                mysqli_query: {type: sql, parameters: [query]}
+                mysqli_real_query: {type: sql, parameters: [query]}
+                mysqli_multi_query: {type: sql, parameters: [query]}
+                mysqli_prepare: {type: sql, parameters: [query]}
+                mysqli_execute_query: {type: sql, parameters: [query]}
+
+            methods:
+                PDO:
+                    query: {type: sql, parameters: [query]}
+                    exec: {type: sql, parameters: [statement]}
+                    prepare: {type: sql, parameters: [query]}
+                mysqli:
+                    query: {type: sql, parameters: [query]}
+                    real_query: {type: sql, parameters: [query]}
+                    multi_query: {type: sql, parameters: [query]}
+                    prepare: {type: sql, parameters: [query]}
+                    execute_query: {type: sql, parameters: [query]}
+                SQLite3:
+                    query: {type: sql, parameters: [query]}
+                    exec: {type: sql, parameters: [query]}
+                    querySingle: {type: sql, parameters: [query]}
+                    prepare: {type: sql, parameters: [query]}

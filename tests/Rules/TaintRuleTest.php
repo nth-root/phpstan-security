@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace NthRoot\PhpstanSecurity\Tests\Rules;
 
 use NthRoot\PhpstanSecurity\Rules\TaintRule;
-use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
-use NthRoot\PhpstanSecurity\TaintAnalysis\Callees;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CallArgumentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
@@ -17,10 +15,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
-use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
-use Override;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -31,13 +26,9 @@ use function sprintf;
  */
 class TaintRuleTest extends RuleTestCase
 {
-    private ReflectionProvider $reflectionProvider;
-
-    #[Override]
-    protected function setUp(): void
+    public static function getAdditionalConfigFiles(): array
     {
-        parent::setUp();
-        $this->reflectionProvider = self::getContainer()->getByType(ReflectionProvider::class);
+        return [__DIR__ . '/../../extension.neon'];
     }
 
     protected function getRule(): Rule
@@ -47,20 +38,19 @@ class TaintRuleTest extends RuleTestCase
 
     protected function getCollectors(): array
     {
-        $callArguments = new CallArguments($this->reflectionProvider);
-        $expressionFlattener = new ExpressionFlattener($this->reflectionProvider, $callArguments);
+        $container = self::getContainer();
 
         return [
-            new FunctionCallSinkCollector($this->reflectionProvider, $expressionFlattener, $callArguments),
-            new MethodCallSinkCollector($expressionFlattener, $callArguments),
-            new HeaderSinkCollector($this->reflectionProvider, $expressionFlattener, $callArguments),
-            new AssignmentCollector($expressionFlattener),
-            new CompoundAssignmentCollector($expressionFlattener),
-            new CallArgumentCollector(new Callees($this->reflectionProvider), $callArguments, $expressionFlattener),
-            new ShellExecSinkCollector($expressionFlattener),
-            new EchoSinkCollector($expressionFlattener),
-            new PrintSinkCollector($expressionFlattener),
-            new IncludeSinkCollector($expressionFlattener),
+            $container->getByType(FunctionCallSinkCollector::class),
+            $container->getByType(MethodCallSinkCollector::class),
+            $container->getByType(HeaderSinkCollector::class),
+            $container->getByType(AssignmentCollector::class),
+            $container->getByType(CompoundAssignmentCollector::class),
+            $container->getByType(CallArgumentCollector::class),
+            $container->getByType(ShellExecSinkCollector::class),
+            $container->getByType(EchoSinkCollector::class),
+            $container->getByType(PrintSinkCollector::class),
+            $container->getByType(IncludeSinkCollector::class),
         ];
     }
 

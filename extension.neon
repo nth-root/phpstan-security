@@ -1,7 +1,36 @@
+includes:
+    - config/taint/php.neon
+    - config/taint/doctrine.neon
+    - config/taint/symfony.neon
+
+parametersSchema:
+    taint: structure([
+        sources: structure([
+            variables: listOf(string()),
+            methods: arrayOf(listOf(string())),
+        ]),
+        flows: structure([
+            functions: arrayOf(listOf(string())),
+        ]),
+        sinks: structure([
+            functions: arrayOf(structure([
+                type: anyOf('sql', 'html', 'shell', 'include', 'redirect'),
+                parameters: listOf(string()),
+            ])),
+            methods: arrayOf(arrayOf(structure([
+                type: anyOf('sql', 'html', 'shell', 'include', 'redirect'),
+                parameters: listOf(string()),
+            ]))),
+        ]),
+    ])
+
 services:
     - NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener
     - NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments
     - NthRoot\PhpstanSecurity\TaintAnalysis\Callees
+    -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\TaintSpec
+        arguments: [%taint%]
     -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector
         tags: [phpstan.collector]

@@ -7,6 +7,7 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
+use NthRoot\PhpstanSecurity\TaintAnalysis\TaintSpec;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
@@ -21,27 +22,11 @@ use function sprintf;
  */
 final readonly class FunctionCallSinkCollector implements Collector
 {
-    private const UNSAFE_FUNCTIONS = [
-        'exec' => ['parameters' => ['command'], 'type' => SinkType::Shell],
-        'system' => ['parameters' => ['command'], 'type' => SinkType::Shell],
-        'shell_exec' => ['parameters' => ['command'], 'type' => SinkType::Shell],
-        'passthru' => ['parameters' => ['command'], 'type' => SinkType::Shell],
-        'proc_open' => ['parameters' => ['command'], 'type' => SinkType::Shell],
-        'popen' => ['parameters' => ['command'], 'type' => SinkType::Shell],
-        'pcntl_exec' => ['parameters' => ['path'], 'type' => SinkType::Shell],
-        'printf' => ['parameters' => ['format', 'values'], 'type' => SinkType::Html],
-        'vprintf' => ['parameters' => ['format', 'values'], 'type' => SinkType::Html],
-        'mysqli_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
-        'mysqli_real_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
-        'mysqli_multi_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
-        'mysqli_prepare' => ['parameters' => ['query'], 'type' => SinkType::Sql],
-        'mysqli_execute_query' => ['parameters' => ['query'], 'type' => SinkType::Sql],
-    ];
-
     public function __construct(
         private ReflectionProvider $reflectionProvider,
         private ExpressionFlattener $expressionFlattener,
-        private CallArguments $callArguments
+        private CallArguments $callArguments,
+        private TaintSpec $taintSpec
     ) {}
 
     public function getNodeType(): string
@@ -60,22 +45,21 @@ final readonly class FunctionCallSinkCollector implements Collector
         }
 
         $functionName = $this->reflectionProvider->resolveFunctionName($node->name, $scope);
+        $sink = $functionName === null ? null : $this->taintSpec->getFunctionSink($functionName);
 
-        if ($functionName === null || !isset(self::UNSAFE_FUNCTIONS[$functionName])) {
+        if ($sink === null) {
             return null;
         }
 
-        $unsafeFunction = self::UNSAFE_FUNCTIONS[$functionName];
-
         $sources = [];
 
-        foreach ($this->callArguments->ofFunctionCall($node, $node->name, $scope, $unsafeFunction['parameters']) as $arg) {
+        foreach ($this->callArguments->ofFunctionCall($node, $node->name, $scope, $sink->parameters) as $arg) {
             $sources = [...$sources, ...$this->expressionFlattener->flatten($arg, $scope)];
         }
 
         return [
             'sink' => sprintf('%s()', $functionName),
-            'type' => $unsafeFunction['type']->value,
+            'type' => $sink->type->value,
             'sources' => $sources,
             'line' => $node->getStartLine(),
         ];

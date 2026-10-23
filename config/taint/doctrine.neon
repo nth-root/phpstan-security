@@ -1,0 +1,21 @@
+parameters:
+      taint:
+          sinks:
+              methods:
+                  Doctrine\DBAL\Connection:
+                      executeQuery: {type: sql, parameters: [sql]}
+                      executeStatement: {type: sql, parameters: [sql]}
+                      prepare: {type: sql, parameters: [sql]}
+                      fetchAssociative: {type: sql, parameters: [query]}
+                      fetchNumeric: {type: sql, parameters: [query]}
+                      fetchOne: {type: sql, parameters: [query]}
+                      fetchAllNumeric: {type: sql, parameters: [query]}
+                      fetchAllAssociative: {type: sql, parameters: [query]}
+                      fetchAllKeyValue: {type: sql, parameters: [query]}
+                      fetchAllAssociativeIndexed: {type: sql, parameters: [query]}
+                      fetchFirstColumn: {type: sql, parameters: [query]}
+                      iterateNumeric: {type: sql, parameters: [query]}
+                      iterateAssociative: {type: sql, parameters: [query]}
+                      iterateKeyValue: {type: sql, parameters: [query]}
+                      iterateAssociativeIndexed: {type: sql, parameters: [query]}
+                      iterateColumn: {type: sql, parameters: [query]}
