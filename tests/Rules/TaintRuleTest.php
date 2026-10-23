@@ -9,6 +9,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
@@ -50,6 +51,7 @@ class TaintRuleTest extends RuleTestCase
         return [
             new FunctionCallSinkCollector($this->reflectionProvider, $expressionFlattener, $callArguments),
             new MethodCallSinkCollector($expressionFlattener, $callArguments),
+            new HeaderSinkCollector($this->reflectionProvider, $expressionFlattener, $callArguments),
             new AssignmentCollector($expressionFlattener),
             new CompoundAssignmentCollector($expressionFlattener),
             new ShellExecSinkCollector($expressionFlattener),
@@ -253,6 +255,19 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::FileInclusion, '$_GET', 'require_once'), 10],
             [$this->getMessage(SinkType::FileInclusion, '$_GET', 'include'), 11],
             [$this->getMessage(SinkType::FileInclusion, '$_GET', 'include'), 12],
+        ]);
+    }
+
+    public function testDetectsOpenRedirects(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/open_redirect.php'], [
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 7],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 8],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 9],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 10],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 11],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 12],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 15],
         ]);
     }
 

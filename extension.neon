@@ -17,6 +17,9 @@ services:
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector
         tags: [phpstan.collector]
     -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector
+        tags: [phpstan.collector]
+    -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector
         tags: [phpstan.collector]
     -

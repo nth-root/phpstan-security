@@ -14,5 +14,5 @@ function cases(): void
 
 function safe(): void
 {
-    include __DIR__ . '/header.php'; // safe
+    include __DIR__ . '/open_redirect.php'; // safe
 }

@@ -10,6 +10,7 @@ enum SinkType: string
     case Html = 'html';
     case Shell = 'shell';
     case FileInclusion = 'include';
+    case RedirectHeader = 'redirect';
 
     public function identifier(): string
     {
@@ -23,6 +24,7 @@ enum SinkType: string
             self::Html => 'cross-site scripting',
             self::Shell => 'command injection',
             self::FileInclusion => 'file inclusion',
+            self::RedirectHeader => 'open redirect',
         };
     }
 }
