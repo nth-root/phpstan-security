@@ -286,6 +286,46 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsLaravelRequestSources(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_request.php'], [
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'exec()'), 11],
+            [$this->getMessage(SinkType::Shell, 'Request::query()', 'exec()'), 12],
+            [$this->getMessage(SinkType::Shell, 'Request::post()', 'exec()'), 13],
+            [$this->getMessage(SinkType::Shell, 'Request::cookie()', 'exec()'), 14],
+            [$this->getMessage(SinkType::Shell, 'Request::header()', 'exec()'), 15],
+            [$this->getMessage(SinkType::Shell, 'Request::server()', 'exec()'), 16],
+            [$this->getMessage(SinkType::Shell, 'Request::json()', 'exec()'), 17],
+            [$this->getMessage(SinkType::Shell, 'Request::route()', 'exec()'), 18],
+            [$this->getMessage(SinkType::Shell, 'Request::string()', 'exec()'), 19],
+
+            [$this->getMessage(SinkType::Shell, 'Request::all()', 'exec()'), 21],
+            [$this->getMessage(SinkType::Shell, 'Request::only()', 'exec()'), 22],
+            [$this->getMessage(SinkType::Shell, 'Request::except()', 'exec()'), 23],
+            [$this->getMessage(SinkType::Shell, 'Request::keys()', 'exec()'), 24],
+
+            [$this->getMessage(SinkType::Shell, 'Request::getContent()', 'exec()'), 27],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'exec()'), 29],
+
+            [$this->getMessage(SinkType::Shell, 'Request::segment()', 'exec()'), 47],
+            [$this->getMessage(SinkType::Shell, 'Request::segments()', 'exec()'), 48],
+            [$this->getMessage(SinkType::Shell, 'Request::path()', 'exec()'), 49],
+            [$this->getMessage(SinkType::Shell, 'Request::decodedPath()', 'exec()'), 50],
+            [$this->getMessage(SinkType::Shell, 'Request::url()', 'exec()'), 51],
+            [$this->getMessage(SinkType::Shell, 'Request::fullUrl()', 'exec()'), 52],
+            [$this->getMessage(SinkType::Shell, 'Request::fullUrlWithQuery()', 'exec()'), 53],
+            [$this->getMessage(SinkType::Shell, 'Request::fullUrlWithoutQuery()', 'exec()'), 54],
+            [$this->getMessage(SinkType::Shell, 'Request::host()', 'exec()'), 55],
+            [$this->getMessage(SinkType::Shell, 'Request::httpHost()', 'exec()'), 56],
+            [$this->getMessage(SinkType::Shell, 'Request::schemeAndHttpHost()', 'exec()'), 57],
+            [$this->getMessage(SinkType::Shell, 'Request::root()', 'exec()'), 58],
+
+            [$this->getMessage(SinkType::Shell, 'Request::userAgent()', 'exec()'), 63],
+            [$this->getMessage(SinkType::Shell, 'Request::bearerToken()', 'exec()'), 64],
+            [$this->getMessage(SinkType::Shell, 'Request::old()', 'exec()'), 65],
+        ]);
+    }
+
     public function testFollowsArgumentsAcrossFiles(): void
     {
         $this->analyse([

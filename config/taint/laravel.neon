@@ -1,0 +1,5 @@
+parameters:
+    taint:
+        sources:
+            methods:
+                Illuminate\Http\Request: [input, query, post, cookie, header, server, json, route, string, str, all, only, except, keys, segment, segments, path, decodedPath, url, fullUrl, fullUrlWithQuery, fullUrlWithoutQuery, host, httpHost, schemeAndHttpHost, root, userAgent, bearerToken, old]
