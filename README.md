@@ -4,6 +4,8 @@ An extension for [PHPStan](https://phpstan.org/) that detects common security vu
 Its main feature is [taint analysis](https://en.wikipedia.org/wiki/Taint_checking): following user input (`$_GET`,
 Symfony's `Request` object and route parameters) through variables and function calls, and reporting when it reaches a
 dangerous location such as a SQL query, a shell command, or `echo`.
+Because it analyzes the whole project at once, it also catches input that a controller passes to a service or repository
+in another file.
 
 > [!WARNING]
 > This extension is experimental and under active development.
