@@ -3,3 +3,35 @@ parameters:
         sources:
             methods:
                 Illuminate\Http\Request: [input, query, post, cookie, header, server, json, route, string, str, all, only, except, keys, segment, segments, path, decodedPath, url, fullUrl, fullUrlWithQuery, fullUrlWithoutQuery, host, httpHost, schemeAndHttpHost, root, userAgent, bearerToken, old]
+
+        sinks:
+            methods:
+                Illuminate\Database\ConnectionInterface:
+                    select: {type: sql, parameters: [query]}
+                    selectOne: {type: sql, parameters: [query]}
+                    cursor: {type: sql, parameters: [query]}
+                    insert: {type: sql, parameters: [query]}
+                    update: {type: sql, parameters: [query]}
+                    delete: {type: sql, parameters: [query]}
+                    statement: {type: sql, parameters: [query]}
+                    affectingStatement: {type: sql, parameters: [query]}
+                    unprepared: {type: sql, parameters: [query]}
+                    raw: {type: sql, parameters: [value]}
+                Illuminate\Database\Query\Builder:
+                    whereRaw: {type: sql, parameters: [sql]}
+                    orWhereRaw: {type: sql, parameters: [sql]}
+                    havingRaw: {type: sql, parameters: [sql]}
+                    orHavingRaw: {type: sql, parameters: [sql]}
+                    orderByRaw: {type: sql, parameters: [sql]}
+                    groupByRaw: {type: sql, parameters: [sql]}
+                    selectRaw: {type: sql, parameters: [expression]}
+                    fromRaw: {type: sql, parameters: [expression]}
+                Illuminate\Database\Eloquent\Builder:
+                    whereRaw: {type: sql, parameters: [sql]}
+                    orWhereRaw: {type: sql, parameters: [sql]}
+                    havingRaw: {type: sql, parameters: [sql]}
+                    orHavingRaw: {type: sql, parameters: [sql]}
+                    orderByRaw: {type: sql, parameters: [sql]}
+                    groupByRaw: {type: sql, parameters: [sql]}
+                    selectRaw: {type: sql, parameters: [expression]}
+                    fromRaw: {type: sql, parameters: [expression]}

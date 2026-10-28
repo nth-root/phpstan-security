@@ -331,6 +331,43 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsLaravelDatabaseSinks(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_database.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::select()'), 15],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::selectOne()'), 16],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::cursor()'), 17],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::insert()'), 18],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::update()'), 19],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::delete()'), 20],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::statement()'), 21],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::affectingStatement()'), 22],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::unprepared()'), 23],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::raw()'), 24],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\ConnectionInterface::select()'), 25],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Connection::select()'), 26],
+
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::whereRaw()'), 31],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orWhereRaw()'), 32],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::havingRaw()'), 33],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orHavingRaw()'), 34],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orderByRaw()'), 35],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::groupByRaw()'), 36],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::selectRaw()'), 37],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::fromRaw()'), 38],
+
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::whereRaw()'), 46],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orWhereRaw()'), 47],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::havingRaw()'), 48],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orHavingRaw()'), 49],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orderByRaw()'), 50],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::groupByRaw()'), 51],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::selectRaw()'), 52],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::fromRaw()'), 53],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orderByRaw()'), 55],
+        ]);
+    }
+
     public function testFollowsArgumentsAcrossFiles(): void
     {
         $this->analyse([

@@ -2,7 +2,7 @@
 
 An extension for [PHPStan](https://phpstan.org/) that detects common security vulnerabilities in PHP code.
 Its main feature is [taint analysis](https://en.wikipedia.org/wiki/Taint_checking): following user input (`$_GET`,
-Symfony's `Request` object and route parameters) through variables and function calls, and reporting when it reaches a
+Symfony's and Laravel's `Request` objects and route parameters) through variables and function calls, and reporting when it reaches a
 dangerous location such as a SQL query, a shell command, or `echo`.
 Because it analyzes the whole project at once, it also catches input that a controller passes to a service or repository
 in another file.
@@ -14,19 +14,20 @@ in another file.
 
 ## Detected vulnerabilities
 
-| Vulnerability              | Identifier         | Supported sinks                                        |
-|----------------------------|--------------------|--------------------------------------------------------|
-| SQL injection              | `tainted.sql`      | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection` |
-| Cross-site scripting (XSS) | `tainted.html`     | `echo`, `print`, `printf()`, `vprintf()`               |
-| Command injection          | `tainted.shell`    | `exec()`, `system()`, `shell_exec()`, backticks, ...   |
-| Path traversal, SSRF       | `tainted.path`     | `file_get_contents()`, `fopen()`, `unlink()`, ...      |
-| File inclusion             | `tainted.include`  | `include`, `include_once`, `require`, `require_once`   |
-| Open redirect              | `tainted.redirect` | `header()` with a `Location:` or `Refresh:` header     |
+| Vulnerability              | Identifier         | Supported sinks                                                                                |
+|----------------------------|--------------------|------------------------------------------------------------------------------------------------|
+| SQL injection              | `tainted.sql`      | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections and query builders |
+| Cross-site scripting (XSS) | `tainted.html`     | `echo`, `print`, `printf()`, `vprintf()`                                                       |
+| Command injection          | `tainted.shell`    | `exec()`, `system()`, `shell_exec()`, backticks, ...                                           |
+| Path traversal, SSRF       | `tainted.path`     | `file_get_contents()`, `fopen()`, `unlink()`, ...                                              |
+| File inclusion             | `tainted.include`  | `include`, `include_once`, `require`, `require_once`                                           |
+| Open redirect              | `tainted.redirect` | `header()` with a `Location:` or `Refresh:` header                                             |
 
 User input is detected from:
 
 - `$_GET`, `$_POST`, `$_REQUEST`, `$_COOKIE`
 - Symfony's `Request` and its `query`, `request`, `cookies` and `headers` bags
+- Laravel's `Request` (`input()`, `query()`, `all()`, `header()`, ...)
 - Controller arguments that match a `{placeholder}` in a `#[Route]` attribute
 
 ## Installation
@@ -74,3 +75,7 @@ The analysis only follows tainted data through code it understands.
 - Symfony route parameters are only treated as user input for routes defined with `#[Route]` attributes.
   Other routing configuration (YAML, XML, PHP) is not read.
 - Twig templates aren't analyzed, so XSS through `{{ ... |raw }}` isn't detected.
+- Laravel facade calls that are sinks or sources themselves (`DB::select()`, `Request::input()`) aren't detected yet.
+- Laravel's `$request->name`, the `request()` helper, and methods called on `$request->string()` aren't followed yet.
+- Laravel route parameters from `routes/*.php` aren't treated as user input.
+- Blade templates aren't analyzed, so XSS through `{!! ... !!}` isn't detected.
