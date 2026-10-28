@@ -5,6 +5,11 @@ Its main feature is [taint analysis](https://en.wikipedia.org/wiki/Taint_checkin
 Symfony's `Request` object and route parameters) through variables and function calls, and reporting when it reaches a
 dangerous location such as a SQL query, a shell command, or `echo`.
 
+> [!WARNING]
+> This extension is experimental and under active development.
+> Error identifiers, configuration and behavior may change between releases.
+> A clean run does not mean your code is free of vulnerabilities.
+
 ## Detected vulnerabilities
 
 | Vulnerability              | Identifier         | Supported sinks                                        |
