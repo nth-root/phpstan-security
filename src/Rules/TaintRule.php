@@ -14,6 +14,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintGraph;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
@@ -59,11 +60,18 @@ final readonly class TaintRule implements Rule
             }
         }
 
-        foreach ($node->get(CallArgumentCollector::class) as $calls) {
-            foreach ($calls as $assignments) {
-                foreach ($assignments as $assignment) {
-                    foreach ($assignment['from'] as $from) {
-                        $graph->addEdge($from, $assignment['to']);
+        $assignmentListsByFile = [
+            $node->get(CallArgumentCollector::class),
+            $node->get(SymfonyRouteParameterCollector::class),
+        ];
+
+        foreach ($assignmentListsByFile as $collected) {
+            foreach ($collected as $calls) {
+                foreach ($calls as $assignments) {
+                    foreach ($assignments as $assignment) {
+                        foreach ($assignment['from'] as $from) {
+                            $graph->addEdge($from, $assignment['to']);
+                        }
                     }
                 }
             }

@@ -59,6 +59,9 @@ services:
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CallArgumentCollector
         tags: [phpstan.collector]
     -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector
+        tags: [phpstan.collector]
+    -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector
         tags: [phpstan.collector]
 

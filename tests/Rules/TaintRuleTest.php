@@ -15,6 +15,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -47,6 +48,7 @@ class TaintRuleTest extends RuleTestCase
             $container->getByType(AssignmentCollector::class),
             $container->getByType(CompoundAssignmentCollector::class),
             $container->getByType(CallArgumentCollector::class),
+            $container->getByType(SymfonyRouteParameterCollector::class),
             $container->getByType(ShellExecSinkCollector::class),
             $container->getByType(EchoSinkCollector::class),
             $container->getByType(PrintSinkCollector::class),
@@ -268,6 +270,19 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Shell, 'HeaderBag::get()', 'exec()'), 40],
             [$this->getMessage(SinkType::Shell, 'InputBag::all()', 'exec()'), 41],
             [$this->getMessage(SinkType::Shell, 'InputBag::get()', 'exec()'), 42],
+        ]);
+    }
+
+    public function testDetectsSymfonyRouteParameters(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/symfony_route.php'], [
+            [$this->getMessage(SinkType::Shell, 'route parameter {slug}', 'exec()'), 14],
+            [$this->getMessage(SinkType::Shell, 'route parameter {locale}', 'exec()'), 15],
+            [$this->getMessage(SinkType::Shell, 'route parameter {id}', 'exec()'), 21],
+            [$this->getMessage(SinkType::Shell, 'route parameter {page}', 'exec()'), 22],
+            [$this->getMessage(SinkType::Shell, 'route parameter {topic}', 'exec()'), 28],
+            [$this->getMessage(SinkType::Shell, 'route parameter {onderwerp}', 'exec()'), 29],
+            [$this->getMessage(SinkType::Shell, 'route parameter {name}', 'exec()'), 35],
         ]);
     }
 
