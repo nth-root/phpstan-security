@@ -22,16 +22,10 @@ class EndToEndTest extends TestCase
         $this->assertSame(
             [
                 [
-                    'file' => $directory . '/index.php',
-                    'line' => 9,
-                    'message' => 'Possible command injection: tainted value from $_GET is passed to exec()',
-                    'identifier' => 'tainted.shell',
-                ],
-                [
-                    'file' => $directory . '/index.php',
-                    'line' => 12,
-                    'message' => 'Possible cross-site scripting: tainted value from $_GET is passed to echo',
-                    'identifier' => 'tainted.html',
+                    'file' => $directory . '/src/Repository/UserRepository.php',
+                    'line' => 15,
+                    'message' => 'Possible SQL injection: tainted value from route parameter {username} is passed to Doctrine\DBAL\Connection::executeQuery()',
+                    'identifier' => 'tainted.sql',
                 ],
             ],
             $this->analyse($directory),
@@ -48,7 +42,7 @@ class EndToEndTest extends TestCase
                 PHP_BINARY,
                 self::ROOT . '/vendor/bin/phpstan',
                 'analyse',
-                '--configuration=' . __DIR__ . '/phpstan.neon',
+                '--configuration=' . $directory . '/phpstan.neon',
                 '--error-format=json',
                 '--no-progress',
                 '--no-interaction',
@@ -60,6 +54,8 @@ class EndToEndTest extends TestCase
 
         /** @var array{errors: list<string>, files: array<string, array{messages: list<array{message: string, line: int, identifier: string}>}>}|null $result */
         $result = json_decode($process->getOutput(), true);
+
+        $this->assertNotEmpty($process->getOutput(), $process->getErrorOutput());
 
         $this->assertIsArray($result, 'PHPStan did not produce JSON output: ' . $process->getOutput());
         $this->assertSame([], $result['errors'], 'PHPStan reported general errors');
