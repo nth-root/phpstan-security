@@ -270,6 +270,11 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Shell, 'HeaderBag::get()', 'exec()'), 40],
             [$this->getMessage(SinkType::Shell, 'InputBag::all()', 'exec()'), 41],
             [$this->getMessage(SinkType::Shell, 'InputBag::get()', 'exec()'), 42],
+            [$this->getMessage(SinkType::Shell, 'Request::getPathInfo()', 'exec()'), 58],
+            [$this->getMessage(SinkType::Shell, 'Request::getRequestUri()', 'exec()'), 59],
+            [$this->getMessage(SinkType::Shell, 'Request::getUri()', 'exec()'), 60],
+            [$this->getMessage(SinkType::Shell, 'Request::getHost()', 'exec()'), 61],
+            [$this->getMessage(SinkType::Shell, 'Request::getQueryString()', 'exec()'), 62],
         ]);
     }
 

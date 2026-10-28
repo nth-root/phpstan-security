@@ -2,6 +2,6 @@ parameters:
     taint:
         sources:
             methods:
-                Symfony\Component\HttpFoundation\Request: [get, getContent, toArray]
+                Symfony\Component\HttpFoundation\Request: [get, getContent, toArray, getPathInfo, getRequestUri, getUri, getHost, getQueryString]
                 Symfony\Component\HttpFoundation\InputBag: [get, all, keys, getString, filter]
                 Symfony\Component\HttpFoundation\HeaderBag: [get, all, keys]

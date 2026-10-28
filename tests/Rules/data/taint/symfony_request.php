@@ -52,3 +52,12 @@ function safeRequestBag(Request $request): void
     exec($request->attributes->get('cmd')); // not reported yet
     exec($request->server->get('cmd')); // not reported yet
 }
+
+function urlCases(Request $request): void
+{
+    exec($request->getPathInfo()); // unsafe
+    exec($request->getRequestUri()); // unsafe
+    exec($request->getUri()); // unsafe
+    exec($request->getHost()); // unsafe
+    exec($request->getQueryString()); // unsafe
+}
