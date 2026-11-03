@@ -165,6 +165,17 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testSanitizersOnlyStopTheirOwnSinkTypes(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/sanitizers.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 9],
+            [$this->getMessage(SinkType::Html, '$_GET', 'echo'), 11],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 12],
+            [$this->getMessage(SinkType::Html, '$_POST', 'echo'), 15],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 19],
+        ]);
+    }
+
     public function testDetectsThroughCompoundAssignment(): void
     {
         $this->analyse([__DIR__ . '/data/taint/compound_assignment.php'], [

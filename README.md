@@ -67,7 +67,8 @@ The analysis only follows tainted data through code it understands.
 
 - `$_SERVER` and `$request->attributes` are not detected as sources yet.
 - Built-in functions that aren't configured as a [flow function](config/taint/php.neon) stop taint.
-  That currently includes sanitizers like `htmlspecialchars()` and `escapeshellarg()`.
+- `htmlspecialchars()` and `htmlentities()` count as HTML sanitizers regardless of their `$flags` and of where the
+  output ends up, so XSS through an unquoted attribute or a `javascript:` URL isn't detected.
 - Return values of user-defined functions and methods aren't followed yet.
 - Values assigned to properties (`$this->query = $input`) or array elements (`$arr['q'] = $input`) aren't followed yet.
 - The analysis is flow-insensitive: once a variable holds user input, it is considered tainted in that function, even if

@@ -21,7 +21,10 @@ class TaintSpecTest extends PHPStanTestCase
                 'methods' => ['Random\Randomizer' => ['getBytes']],
             ],
             'flows' => [
-                'functions' => ['trim' => ['parameters' => ['string']]],
+                'functions' => [
+                    'trim' => ['parameters' => ['string']],
+                    'htmlspecialchars' => ['parameters' => ['string'], 'sanitizes' => ['html']],
+                ],
             ],
             'sinks' => [
                 'functions' => ['exec' => ['type' => 'shell', 'parameters' => ['command']]],
@@ -48,6 +51,12 @@ class TaintSpecTest extends PHPStanTestCase
         $this->assertSame(SinkType::Shell, $this->spec->getFunctionSink('Exec')?->type);
         $this->assertSame(['command'], $this->spec->getFunctionSink('exec')?->parameters);
         $this->assertNull($this->spec->getFunctionSink('system'));
+    }
+
+    public function testReturnsTheSinkTypesAFlowSanitizes(): void
+    {
+        $this->assertSame([SinkType::Html], $this->spec->getFunctionFlow('htmlspecialchars')?->sanitizes);
+        $this->assertSame([], $this->spec->getFunctionFlow('trim')?->sanitizes);
     }
 
     public function testMethodSinksMatchSubclasses(): void

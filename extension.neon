@@ -13,6 +13,7 @@ parametersSchema:
         flows: structure([
             functions: arrayOf(structure([
                 parameters: listOf(string()),
+                ?sanitizes: listOf(anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect')),
             ])),
         ]),
         sinks: structure([

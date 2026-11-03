@@ -94,13 +94,12 @@ final readonly class TaintRule implements Rule
         foreach ($sinksByFile as $collected) {
             foreach ($collected as $file => $sinks) {
                 foreach ($sinks as $sink) {
-                    $sources = $graph->getSourcesReaching($sink['sources']);
+                    $type = SinkType::from($sink['type']);
+                    $sources = $graph->getSourcesReaching($sink['sources'], $type);
 
                     if ($sources === []) {
                         continue;
                     }
-
-                    $type = SinkType::from($sink['type']);
 
                     $message = sprintf(
                         'Possible %s: tainted value from %s is passed to %s',

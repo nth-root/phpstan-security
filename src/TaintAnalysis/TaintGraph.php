@@ -25,7 +25,7 @@ final class TaintGraph
      *
      * @return string[]
      */
-    public function getSourcesReaching(array $start): array
+    public function getSourcesReaching(array $start, SinkType $type): array
     {
         $worklist = $start;
 
@@ -40,8 +40,14 @@ final class TaintGraph
 
             $visited[$node] = true;
 
-            if (TaintNode::fromString($node)->isSource()) {
+            $taintNode = TaintNode::fromString($node);
+
+            if ($taintNode->isSource()) {
                 $found[$node] = true;
+            }
+
+            if ($taintNode->kind === NodeKind::Sanitized && !$taintNode->isSanitizedFor($type)) {
+                $worklist[] = $taintNode->unwrap();
             }
 
             array_push($worklist, ...$this->predecessors[$node] ?? []);

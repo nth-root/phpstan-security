@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
+use function array_map;
 use function explode;
 use function implode;
+use function in_array;
 use function strrpos;
 use function substr;
 
@@ -30,9 +32,36 @@ final readonly class TaintNode
         return new self(NodeKind::Variable, $functionKey . ':' . $variable);
     }
 
+    /**
+     * @param SinkType[] $types
+     */
+    public static function sanitized(array $types, string $inner): self
+    {
+        $types = implode(',', array_map(fn(SinkType $type) => $type->value, $types));
+
+        return new self(NodeKind::Sanitized, $types . ':' . $inner);
+    }
+
     public function isSource(): bool
     {
         return $this->kind === NodeKind::Source;
+    }
+
+    public function isSanitizedFor(SinkType $type): bool
+    {
+        [$types] = explode(':', $this->name, 2);
+
+        return $this->kind === NodeKind::Sanitized && in_array($type->value, explode(',', $types), true);
+    }
+
+    /**
+     * @return string id of the node a sanitized node wraps
+     */
+    public function unwrap(): string
+    {
+        [, $inner] = explode(':', $this->name, 2);
+
+        return $inner;
     }
 
     public function toString(): string
@@ -45,6 +74,7 @@ final readonly class TaintNode
         return match ($this->kind) {
             NodeKind::Source => $this->name,
             NodeKind::Variable => substr($this->name, strrpos($this->name, ':') + 1),
+            NodeKind::Sanitized => self::fromString($this->unwrap())->describe(),
         };
     }
 }

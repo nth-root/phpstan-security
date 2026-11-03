@@ -20,6 +20,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\TypeCombinator;
 
+use function array_map;
 use function is_string;
 
 final readonly class ExpressionFlattener
@@ -111,7 +112,11 @@ final readonly class ExpressionFlattener
             $nodes = [...$nodes, ...$this->flatten($arg, $scope)];
         }
 
-        return $nodes;
+        if ($flow->sanitizes === []) {
+            return $nodes;
+        }
+
+        return array_map(fn(string $node) => TaintNode::sanitized($flow->sanitizes, $node)->toString(), $nodes);
     }
 
     /**

@@ -6,6 +6,7 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
 use PHPStan\Reflection\ClassReflection;
 
+use function array_map;
 use function explode;
 use function sprintf;
 use function strtolower;
@@ -16,7 +17,7 @@ use function strtolower;
  *     flows: array{functions: array<string, FlowConfig>},
  *     sinks: array{functions: array<string, SinkConfig>, methods: array<string, array<string, SinkConfig>>},
  * }
- * @phpstan-type FlowConfig array{parameters: string[]}
+ * @phpstan-type FlowConfig array{parameters: string[], sanitizes?: list<value-of<SinkType>>}
  * @phpstan-type SinkConfig array{type: value-of<SinkType>, parameters: string[]}
  */
 final readonly class TaintSpec
@@ -62,7 +63,7 @@ final readonly class TaintSpec
         }
 
         foreach ($config['flows']['functions'] as $function => $flow) {
-            $functionFlows[strtolower($function)] = new Flow($flow['parameters']);
+            $functionFlows[strtolower($function)] = new Flow($flow['parameters'], array_map(SinkType::from(...), $flow['sanitizes'] ?? []));
         }
 
         foreach ($config['sinks']['methods'] as $class => $methods) {
