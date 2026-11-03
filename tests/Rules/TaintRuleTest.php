@@ -132,6 +132,20 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsSymfonyRedirect(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/symfony_redirect.php'], [
+            [
+                $this->getMessage(
+                    SinkType::RedirectHeader,
+                    'InputBag::get()',
+                    'Symfony\Bundle\FrameworkBundle\Controller\AbstractController::redirect()'
+                ),
+                13,
+            ],
+        ]);
+    }
+
     public function testDetectsSymfonyProcess(): void
     {
         $this->analyse([__DIR__ . '/data/taint/symfony_process.php'], [

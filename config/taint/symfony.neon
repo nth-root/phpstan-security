@@ -13,5 +13,7 @@ parameters:
                     evaluate: {type: xpath, parameters: [xpath]}
                 Symfony\Component\Ldap\LdapInterface:
                     query: {type: ldap, parameters: [dn, query]}
+                Symfony\Bundle\FrameworkBundle\Controller\AbstractController:
+                    redirect: {type: redirect, parameters: [url]}
                 Symfony\Component\Process\Process:
                     fromShellCommandline: {type: shell, parameters: [command]}

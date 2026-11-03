@@ -21,7 +21,7 @@ in another file.
 | Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                 |
 | Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, ...                                                               |
 | File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                            |
-| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header                                                              |
+| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header, Symfony `AbstractController::redirect()`                    |
 | Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                 |
 | Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                    |
 | Eval injection             | `tainted.eval`        | `eval`                                                                                                          |
