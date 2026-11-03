@@ -8,6 +8,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CallArgumentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EvalSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
@@ -91,6 +92,7 @@ final readonly class TaintRule implements Rule
             $node->get(EchoSinkCollector::class),
             $node->get(PrintSinkCollector::class),
             $node->get(IncludeSinkCollector::class),
+            $node->get(EvalSinkCollector::class),
         ];
 
         foreach ($sinksByFile as $collected) {

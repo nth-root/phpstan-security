@@ -14,6 +14,7 @@ enum SinkType: string
     case RedirectHeader = 'redirect';
     case Unserialize = 'unserialize';
     case Callable = 'callable';
+    case Eval = 'eval';
 
     public function identifier(): string
     {
@@ -31,6 +32,7 @@ enum SinkType: string
             self::RedirectHeader => 'open redirect',
             self::Unserialize => 'insecure deserialization',
             self::Callable => 'callable injection',
+            self::Eval => 'eval injection',
         };
     }
 }

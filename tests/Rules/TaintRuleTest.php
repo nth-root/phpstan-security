@@ -9,6 +9,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CallArgumentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EvalSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
@@ -57,6 +58,7 @@ class TaintRuleTest extends RuleTestCase
             $container->getByType(EchoSinkCollector::class),
             $container->getByType(PrintSinkCollector::class),
             $container->getByType(IncludeSinkCollector::class),
+            $container->getByType(EvalSinkCollector::class),
         ];
     }
 
@@ -254,6 +256,14 @@ class TaintRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/taint/sqlite3.php'], [
             [$this->getMessage(SinkType::Sql, '$_GET', 'SQLite3::query()'), 7],
+        ]);
+    }
+
+    public function testDetectsEval(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/eval.php'], [
+            [$this->getMessage(SinkType::Eval, '$_GET', 'eval'), 7],
+            [$this->getMessage(SinkType::Eval, '$_POST', 'eval'), 8],
         ]);
     }
 

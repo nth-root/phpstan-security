@@ -24,6 +24,7 @@ in another file.
 | Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header                                                              |
 | Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                 |
 | Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                    |
+| Eval injection             | `tainted.eval`        | `eval`                                                                                                          |
 
 User input is detected from:
 
