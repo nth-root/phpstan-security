@@ -13,16 +13,16 @@ parametersSchema:
         flows: structure([
             functions: arrayOf(structure([
                 parameters: listOf(string()),
-                ?sanitizes: listOf(anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect')),
+                ?sanitizes: listOf(anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect', 'unserialize')),
             ])),
         ]),
         sinks: structure([
             functions: arrayOf(structure([
-                type: anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect'),
+                type: anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect', 'unserialize'),
                 parameters: listOf(string()),
             ])),
             methods: arrayOf(arrayOf(structure([
-                type: anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect'),
+                type: anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect', 'unserialize'),
                 parameters: listOf(string()),
             ]))),
         ]),

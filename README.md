@@ -14,14 +14,15 @@ in another file.
 
 ## Detected vulnerabilities
 
-| Vulnerability              | Identifier         | Supported sinks                                                                                                 |
-|----------------------------|--------------------|-----------------------------------------------------------------------------------------------------------------|
-| SQL injection              | `tainted.sql`      | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade and query builders |
-| Cross-site scripting (XSS) | `tainted.html`     | `echo`, `print`, `printf()`, `vprintf()`                                                                        |
-| Command injection          | `tainted.shell`    | `exec()`, `system()`, `shell_exec()`, backticks, ...                                                            |
-| Path traversal, SSRF       | `tainted.path`     | `file_get_contents()`, `fopen()`, `unlink()`, ...                                                               |
-| File inclusion             | `tainted.include`  | `include`, `include_once`, `require`, `require_once`                                                            |
-| Open redirect              | `tainted.redirect` | `header()` with a `Location:` or `Refresh:` header                                                              |
+| Vulnerability              | Identifier            | Supported sinks                                                                                                 |
+|----------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------|
+| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade and query builders |
+| Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`                                                                        |
+| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, ...                                                            |
+| Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, ...                                                               |
+| File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                            |
+| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header                                                              |
+| Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                 |
 
 User input is detected from:
 

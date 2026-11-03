@@ -121,6 +121,14 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsUnserialize(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/unserialize.php'], [
+            [$this->getMessage(SinkType::Unserialize, '$_COOKIE', 'unserialize()'), 7],
+            [$this->getMessage(SinkType::Unserialize, '$_GET', 'unserialize()'), 8],
+        ]);
+    }
+
     public function testDetectsUseOfBacktickOperator(): void
     {
         $this->analyse([__DIR__ . '/data/taint/shell_exec.php'], [
