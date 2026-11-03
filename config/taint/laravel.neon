@@ -7,6 +7,8 @@ parameters:
 
         sinks:
             methods:
+                Illuminate\Http\Response:
+                    __construct: {type: html, parameters: [content]}
                 Illuminate\Database\ConnectionInterface:
                     select: {type: sql, parameters: [query]}
                     selectOne: {type: sql, parameters: [query]}

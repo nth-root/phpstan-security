@@ -556,6 +556,22 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsLaravelResponseConstructors(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_response.php'], [
+            [$this->getMessage(SinkType::Html, 'Request::input()', 'new Illuminate\Http\Response()'), 12],
+            [$this->getMessage(SinkType::Html, 'Request::input()', 'new Illuminate\Http\Response()'), 13],
+            [
+                $this->getMessage(
+                    SinkType::RedirectHeader,
+                    'Request::input()',
+                    'new Illuminate\Http\RedirectResponse()'
+                ),
+                14,
+            ],
+        ]);
+    }
+
     public function testDetectsLaravelFacades(): void
     {
         $this->analyse([__DIR__ . '/data/taint/laravel_facades.php'], [
