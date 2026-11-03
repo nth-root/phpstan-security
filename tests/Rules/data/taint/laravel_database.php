@@ -61,3 +61,10 @@ function safe(ConnectionInterface $connection, Builder $query): void
     $query->whereRaw('id = ?', [$_GET['id']]); // safe (bindings)
     $query->where('name', $_GET['name']); // safe (not a sink)
 }
+
+function chainedCases(Builder $query): void
+{
+    $query
+        ->where('active', true)
+        ->whereRaw("name = '" . $_GET['name'] . "'"); // unsafe (reported on the line of the method name)
+}

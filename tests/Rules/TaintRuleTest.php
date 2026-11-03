@@ -549,6 +549,8 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::selectRaw()'), 52],
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::fromRaw()'), 53],
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orderByRaw()'), 55],
+
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::whereRaw()'), 69],
         ]);
     }
 

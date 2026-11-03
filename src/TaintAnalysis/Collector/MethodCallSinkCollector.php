@@ -60,7 +60,7 @@ final readonly class MethodCallSinkCollector implements Collector
                 'sink' => sprintf('%s::%s()', $method->getDeclaringClass()->getName(), $method->getName()),
                 'type' => $sink->type->value,
                 'sources' => $sources,
-                'line' => $node->getStartLine(),
+                'line' => $node->name->getStartLine(),
             ];
         }
 
