@@ -91,21 +91,22 @@ parameters:
 - Only native types are trusted: a value with a native `int` type or one narrowed by `is_numeric()` isn't tainted,
   but a parameter documented as `@param int` is.
 - Parameters and return values are shared by all calls to a function: if any caller passes user input to a function
-  that returns its argument, the return value is considered tainted at every call site.
+  that returns its argument, the return value is considered tainted at every call site ([#6]).
 - The analysis is flow-insensitive: once a variable holds user input, it is considered tainted in that function, even if
-  it is overwritten at a later point.
-- Responses are checked for XSS even when they aren't HTML, such as
+  it is overwritten at a later point ([#5]).
+- Responses are checked for XSS even when they aren't HTML ([#7]), such as
   `new Response($csv, 200, ['Content-Type' => 'text/csv'])` or a Laravel `Response` with an array (which becomes JSON).
 - Redirects are reported even when the URL starts with a constant path, as in `'/dashboard?tab=' . $tab`, although the
-  host can't change.
+  host can't change ([#8]).
 
+See also the [open issues labelled `false positive`][false positive issues].
 To suppress a false positive, see [Ignoring findings](#ignoring-findings).
 
 ### False negatives (vulnerabilities that aren't detected)
 
 The analysis only follows tainted data through code it understands.
 
-- `$_SERVER` and `$request->attributes` are not detected as sources yet.
+- `$_SERVER` and `$request->attributes` are not detected as sources yet ([#19], [#20]).
 - Built-in functions that aren't configured as a [flow function](config/taint/php.neon) stop taint.
 - `htmlspecialchars()` and `htmlentities()` count as HTML sanitizers regardless of their `$flags` and of where the
   output ends up, so XSS through an unquoted attribute or a `javascript:` URL isn't detected.
@@ -114,12 +115,31 @@ The analysis only follows tainted data through code it understands.
 - `basename()` counts as a sanitizer for file paths, but `basename('..')` is still `..`: `'/uploads/' . basename($name)`
   can name the parent directory, which matters for `unlink()` or `Filesystem::remove()`. Without a directory prefix, a
   `data:` URL also passes through.
-- Values assigned to properties (`$this->query = $input`) or array elements (`$arr['q'] = $input`) aren't followed yet.
-- `foreach` loops aren't followed: in `foreach ($_GET['ids'] as $id)`, `$id` isn't considered tainted.
+- Values assigned to properties (`$this->query = $input`) or array elements (`$arr['q'] = $input`) aren't followed yet
+  ([#12], [#11]).
+- `foreach` loops aren't followed: in `foreach ($_GET['ids'] as $id)`, `$id` isn't considered tainted ([#10]).
 - Symfony route parameters are only treated as user input for routes defined with `#[Route]` attributes.
   Other routing configuration (YAML, XML, PHP) is not read.
 - Twig templates aren't analyzed, so XSS through `{{ ... |raw }}` isn't detected.
 - Static calls on Eloquent models (`User::whereRaw()`) aren't detected yet.
-- Laravel's `$request->name`, the `request()` helper, and methods called on `$request->string()` aren't followed yet.
-- Laravel route parameters from `routes/*.php` aren't treated as user input.
+- Laravel's `$request->name`, the `request()` helper, and methods called on `$request->string()` aren't followed yet
+  ([#25], [#21]).
+- Laravel route parameters from `routes/*.php` aren't treated as user input ([#26]).
 - Blade templates aren't analyzed, so XSS through `{!! ... !!}` isn't detected.
+
+See also the [open issues labelled `false negative`][false negative issues].
+
+[false positive issues]: https://github.com/nth-root/phpstan-security/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22false%20positive%22
+[false negative issues]: https://github.com/nth-root/phpstan-security/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22false%20negative%22
+[#5]: https://github.com/nth-root/phpstan-security/issues/5
+[#6]: https://github.com/nth-root/phpstan-security/issues/6
+[#7]: https://github.com/nth-root/phpstan-security/issues/7
+[#8]: https://github.com/nth-root/phpstan-security/issues/8
+[#10]: https://github.com/nth-root/phpstan-security/issues/10
+[#11]: https://github.com/nth-root/phpstan-security/issues/11
+[#12]: https://github.com/nth-root/phpstan-security/issues/12
+[#19]: https://github.com/nth-root/phpstan-security/issues/19
+[#20]: https://github.com/nth-root/phpstan-security/issues/20
+[#21]: https://github.com/nth-root/phpstan-security/issues/21
+[#25]: https://github.com/nth-root/phpstan-security/issues/25
+[#26]: https://github.com/nth-root/phpstan-security/issues/26
