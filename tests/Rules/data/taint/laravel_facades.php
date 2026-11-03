@@ -11,6 +11,7 @@ function cases(): void
     DB::raw($_GET['sql']); // unsafe
     DB::select(bindings: [], query: $_GET['sql']); // unsafe
     DB::select(Request::input('sql')); // unsafe
+    DB::select(DB::raw($_GET['sql'])); // unsafe (reported on raw())
 }
 
 function safe(): void

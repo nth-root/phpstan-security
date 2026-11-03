@@ -387,6 +387,7 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Support\Facades\DB::raw()'), 11],
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Support\Facades\DB::select()'), 12],
             [$this->getMessage(SinkType::Sql, 'Request::input()', 'Illuminate\Support\Facades\DB::select()'), 13],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Support\Facades\DB::raw()'), 14],
         ]);
     }
 
