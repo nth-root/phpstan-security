@@ -63,6 +63,9 @@ services:
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EvalSinkCollector
         tags: [phpstan.collector]
     -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\InstantiationSinkCollector
+        tags: [phpstan.collector]
+    -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector
         tags: [phpstan.collector]
     -

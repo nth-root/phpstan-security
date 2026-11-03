@@ -13,6 +13,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EvalSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\InstantiationSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ReturnCollector;
@@ -59,6 +60,7 @@ class TaintRuleTest extends RuleTestCase
             $container->getByType(PrintSinkCollector::class),
             $container->getByType(IncludeSinkCollector::class),
             $container->getByType(EvalSinkCollector::class),
+            $container->getByType(InstantiationSinkCollector::class),
         ];
     }
 
@@ -129,6 +131,39 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Callable, '$_GET', 'call_user_func()'), 7],
             [$this->getMessage(SinkType::Callable, '$_POST', 'call_user_func_array()'), 8],
             [$this->getMessage(SinkType::Callable, '$_GET', 'call_user_func()'), 9],
+        ]);
+    }
+
+    public function testDetectsSymfonyResponseConstructors(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/symfony_response.php'], [
+            [
+                $this->getMessage(
+                    SinkType::RedirectHeader,
+                    '$_GET',
+                    'Symfony\Component\HttpFoundation\RedirectResponse::__construct()'
+                ),
+                18,
+            ],
+            [$this->getMessage(SinkType::Html, '$_GET', 'new Symfony\Component\HttpFoundation\Response()'), 32],
+            [$this->getMessage(SinkType::Html, '$_GET', 'new Symfony\Component\HttpFoundation\Response()'), 33],
+            [
+                $this->getMessage(
+                    SinkType::RedirectHeader,
+                    '$_GET',
+                    'new Symfony\Component\HttpFoundation\RedirectResponse()'
+                ),
+                34,
+            ],
+            [
+                $this->getMessage(
+                    SinkType::FilePath,
+                    '$_GET',
+                    'new Symfony\Component\HttpFoundation\BinaryFileResponse()'
+                ),
+                35,
+            ],
+            [$this->getMessage(SinkType::Html, '$_GET', 'new PlainResponse()'), 36],
         ]);
     }
 

@@ -14,19 +14,19 @@ in another file.
 
 ## Detected vulnerabilities
 
-| Vulnerability              | Identifier            | Supported sinks                                                                                                 |
-|----------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------|
-| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade and query builders |
-| Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`                                                                        |
-| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                 |
-| Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, ..., Symfony `Filesystem` and `AbstractController::file()`        |
-| File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                            |
-| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header, Symfony `AbstractController::redirect()`                    |
-| Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                 |
-| Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                    |
-| Eval injection             | `tainted.eval`        | `eval`                                                                                                          |
-| XPath injection            | `tainted.xpath`       | `DOMXPath`, `SimpleXMLElement::xpath()`, Symfony DomCrawler `filterXPath()` and `evaluate()`                    |
-| LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                                 |
+| Vulnerability              | Identifier            | Supported sinks                                                                                                                      |
+|----------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade and query builders                      |
+| Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`, Symfony `new Response()`                                                                   |
+| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                                      |
+| Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, ..., Symfony `Filesystem`, `AbstractController::file()` and `new BinaryFileResponse()` |
+| File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                                                 |
+| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header, Symfony `AbstractController::redirect()` and `new RedirectResponse()`            |
+| Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                                      |
+| Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                                         |
+| Eval injection             | `tainted.eval`        | `eval`                                                                                                                               |
+| XPath injection            | `tainted.xpath`       | `DOMXPath`, `SimpleXMLElement::xpath()`, Symfony DomCrawler `filterXPath()` and `evaluate()`                                         |
+| LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                                                      |
 
 User input is detected from:
 

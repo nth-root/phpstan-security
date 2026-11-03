@@ -22,6 +22,12 @@ class EndToEndTest extends TestCase
         $this->assertSame(
             [
                 [
+                    'file' => $directory . '/src/Controller/UserController.php',
+                    'line' => 19,
+                    'message' => 'Possible cross-site scripting: tainted value from route parameter {username} is passed to new Symfony\Component\HttpFoundation\Response()',
+                    'identifier' => 'tainted.html',
+                ],
+                [
                     'file' => $directory . '/src/Repository/UserRepository.php',
                     'line' => 15,
                     'message' => 'Possible SQL injection: tainted value from route parameter {username} is passed to Doctrine\DBAL\Connection::executeQuery()',

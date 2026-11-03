@@ -9,6 +9,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\ArgumentsNormalizer;
@@ -56,7 +57,7 @@ final readonly class CallArguments
      * @return Expr[]
      */
     public function ofMethodCall(
-        MethodCall|StaticCall $call,
+        MethodCall|StaticCall|New_ $call,
         ExtendedMethodReflection $method,
         Scope $scope,
         array $parameterNames

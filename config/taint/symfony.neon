@@ -8,6 +8,12 @@ parameters:
 
         sinks:
             methods:
+                Symfony\Component\HttpFoundation\Response:
+                    __construct: {type: html, parameters: [content]}
+                Symfony\Component\HttpFoundation\RedirectResponse:
+                    __construct: {type: redirect, parameters: [url]}
+                Symfony\Component\HttpFoundation\BinaryFileResponse:
+                    __construct: {type: path, parameters: [file]}
                 Symfony\Component\DomCrawler\Crawler:
                     filterXPath: {type: xpath, parameters: [xpath]}
                     evaluate: {type: xpath, parameters: [xpath]}

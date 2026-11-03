@@ -120,6 +120,15 @@ final readonly class TaintSpec
     }
 
     /**
+     * Subclasses often replace a constructor with different parameters (JsonResponse extends Response), so only the
+     * class that declares the constructor is matched.
+     */
+    public function getConstructorSink(ClassReflection $declaringClass): ?Sink
+    {
+        return $this->methodSinks[$declaringClass->getName()]['__construct'] ?? null;
+    }
+
+    /**
      * @param SinkConfig $sink
      */
     private static function buildSink(array $sink): Sink
