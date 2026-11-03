@@ -61,6 +61,15 @@ parameters:
         - identifier: tainted.sql
 ```
 
+## Tested against
+
+| Application                                                         | Result                                                                                                                                                                                                                                                                                                                             |
+|---------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [VulnerableSymfony](https://github.com/Secureaks/VulnerableSymfony) | SQL injection in `/search` and `/login`, path traversal in `/legal/content` and the avatar upload                                                                                                                                                                                                                                  |
+| [DVWA](https://github.com/digininja/DVWA)                           | SQL injection, command injection, open redirect and path traversal, and XSS through the `security` cookie in `dvwaHtmlEcho()`. Reflected XSS (`xss_r`) and file inclusion (`fi`) are missed, the `impossible` level of `exec` is a false positive, and the JSONP callback in `csp` is reported as XSS although it's served as JSON |
+| [vAPI](https://github.com/roottusk/vapi)                            | SQL injection in `API8UsersController`, SSRF in `SurferController`                                                                                                                                                                                                                                                                 |
+| [Symfony Demo](https://github.com/symfony/demo)                     | No findings                                                                                                                                                                                                                                                                                                                        |
+
 ## Known limitations
 
 The analysis only follows tainted data through code it understands.
