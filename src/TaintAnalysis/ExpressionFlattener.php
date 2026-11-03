@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
@@ -74,6 +75,16 @@ final readonly class ExpressionFlattener
 
         if ($expr instanceof Ternary) {
             return [...$this->flatten($expr->if ?? $expr->cond, $scope), ...$this->flatten($expr->else, $scope)];
+        }
+
+        if ($expr instanceof Match_) {
+            $nodes = [];
+
+            foreach ($expr->arms as $arm) {
+                $nodes = [...$nodes, ...$this->flatten($arm->body, $scope)];
+            }
+
+            return $nodes;
         }
 
         if ($expr instanceof InterpolatedString) {

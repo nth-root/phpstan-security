@@ -111,6 +111,9 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 12],
             [$this->getMessage(SinkType::Shell, '$_POST, $_GET', 'exec()'), 13],
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 19],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 24],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 25],
+            [$this->getMessage(SinkType::Shell, '$_POST', 'exec()'), 30],
         ]);
     }
 
