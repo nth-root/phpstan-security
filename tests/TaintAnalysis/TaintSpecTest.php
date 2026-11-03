@@ -21,7 +21,7 @@ class TaintSpecTest extends PHPStanTestCase
                 'methods' => ['Random\Randomizer' => ['getBytes']],
             ],
             'flows' => [
-                'functions' => ['trim' => ['string']],
+                'functions' => ['trim' => ['parameters' => ['string']]],
             ],
             'sinks' => [
                 'functions' => ['exec' => ['type' => 'shell', 'parameters' => ['command']]],
@@ -44,7 +44,7 @@ class TaintSpecTest extends PHPStanTestCase
 
     public function testFunctionsAreCaseInsensitive(): void
     {
-        $this->assertSame(['string'], $this->spec->getFunctionFlows('TRIM'));
+        $this->assertSame(['string'], $this->spec->getFunctionFlow('TRIM')?->parameters);
         $this->assertSame(SinkType::Shell, $this->spec->getFunctionSink('Exec')?->type);
         $this->assertSame(['command'], $this->spec->getFunctionSink('exec')?->parameters);
         $this->assertNull($this->spec->getFunctionSink('system'));

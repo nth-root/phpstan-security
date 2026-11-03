@@ -11,7 +11,9 @@ parametersSchema:
             methods: arrayOf(listOf(string())),
         ]),
         flows: structure([
-            functions: arrayOf(listOf(string())),
+            functions: arrayOf(structure([
+                parameters: listOf(string()),
+            ])),
         ]),
         sinks: structure([
             functions: arrayOf(structure([

@@ -6,15 +6,15 @@ parameters:
 
         flows:
             functions:
-                trim: [string]
-                ltrim: [string]
-                rtrim: [string]
-                strtolower: [string]
-                strtoupper: [string]
-                str_replace: [replace, subject]
-                sprintf: [format, values]
-                implode: [separator, array]
-                explode: [string]
+                trim: {parameters: [string]}
+                ltrim: {parameters: [string]}
+                rtrim: {parameters: [string]}
+                strtolower: {parameters: [string]}
+                strtoupper: {parameters: [string]}
+                str_replace: {parameters: [replace, subject]}
+                sprintf: {parameters: [format, values]}
+                implode: {parameters: [separator, array]}
+                explode: {parameters: [string]}
 
         sinks:
             functions:

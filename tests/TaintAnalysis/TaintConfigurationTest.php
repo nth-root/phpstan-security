@@ -73,8 +73,8 @@ class TaintConfigurationTest extends PHPStanTestCase
      */
     public static function getFunctions(): iterable
     {
-        foreach (self::getConfiguration()['flows']['functions'] as $function => $parameters) {
-            yield sprintf('flow %s()', $function) => [$function, $parameters];
+        foreach (self::getConfiguration()['flows']['functions'] as $function => $flow) {
+            yield sprintf('flow %s()', $function) => [$function, $flow['parameters']];
         }
 
         foreach (self::getConfiguration()['sinks']['functions'] as $function => $sink) {

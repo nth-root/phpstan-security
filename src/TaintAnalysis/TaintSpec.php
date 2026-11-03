@@ -6,19 +6,17 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis;
 
 use PHPStan\Reflection\ClassReflection;
 
-use function array_change_key_case;
 use function explode;
 use function sprintf;
 use function strtolower;
 
-use const CASE_LOWER;
-
 /**
  * @phpstan-type TaintConfig array{
  *     sources: array{variables: string[], methods: array<string, string[]>},
- *     flows: array{functions: array<string, string[]>},
+ *     flows: array{functions: array<string, FlowConfig>},
  *     sinks: array{functions: array<string, SinkConfig>, methods: array<string, array<string, SinkConfig>>},
  * }
+ * @phpstan-type FlowConfig array{parameters: string[]}
  * @phpstan-type SinkConfig array{type: value-of<SinkType>, parameters: string[]}
  */
 final readonly class TaintSpec
@@ -34,7 +32,7 @@ final readonly class TaintSpec
     private array $sourceMethods;
 
     /**
-     * @var array<lowercase-string, string[]>
+     * @var array<lowercase-string, Flow>
      */
     private array $functionFlows;
 
@@ -53,7 +51,7 @@ final readonly class TaintSpec
      */
     public function __construct(array $config)
     {
-        $sourceMethods = $methodSinks = $functionSinks = [];
+        $sourceMethods = $functionFlows = $methodSinks = $functionSinks = [];
 
         $this->sourceVariables = $config['sources']['variables'];
 
@@ -61,6 +59,10 @@ final readonly class TaintSpec
             foreach ($methods as $method) {
                 $sourceMethods[$class][strtolower($method)] = sprintf('%s::%s()', self::getShortName($class), $method);
             }
+        }
+
+        foreach ($config['flows']['functions'] as $function => $flow) {
+            $functionFlows[strtolower($function)] = new Flow($flow['parameters']);
         }
 
         foreach ($config['sinks']['methods'] as $class => $methods) {
@@ -74,7 +76,7 @@ final readonly class TaintSpec
         }
 
         $this->sourceMethods = $sourceMethods;
-        $this->functionFlows = array_change_key_case($config['flows']['functions'], CASE_LOWER);
+        $this->functionFlows = $functionFlows;
         $this->functionSinks = $functionSinks;
         $this->methodSinks = $methodSinks;
     }
@@ -95,10 +97,7 @@ final readonly class TaintSpec
         return null;
     }
 
-    /**
-     * @return ?string[] names of the parameters whose taint reaches the return value
-     */
-    public function getFunctionFlows(string $function): ?array
+    public function getFunctionFlow(string $function): ?Flow
     {
         return $this->functionFlows[strtolower($function)] ?? null;
     }

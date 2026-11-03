@@ -99,7 +99,7 @@ final readonly class ExpressionFlattener
     private function flattenFunctionCall(FuncCall $call, Name $name, Scope $scope): array
     {
         $functionName = $this->reflectionProvider->resolveFunctionName($name, $scope);
-        $flow = $functionName === null ? null : $this->taintSpec->getFunctionFlows($functionName);
+        $flow = $functionName === null ? null : $this->taintSpec->getFunctionFlow($functionName);
 
         if ($flow === null) {
             return [];
@@ -107,7 +107,7 @@ final readonly class ExpressionFlattener
 
         $nodes = [];
 
-        foreach ($this->callArguments->ofFunctionCall($call, $name, $scope, $flow) as $arg) {
+        foreach ($this->callArguments->ofFunctionCall($call, $name, $scope, $flow->parameters) as $arg) {
             $nodes = [...$nodes, ...$this->flatten($arg, $scope)];
         }
 
