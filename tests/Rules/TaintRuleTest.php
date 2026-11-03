@@ -259,6 +259,17 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsXPathInjection(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/xpath.php'], [
+            [$this->getMessage(SinkType::XPath, '$_GET', 'DOMXPath::query()'), 9],
+            [$this->getMessage(SinkType::XPath, '$_GET', 'DOMXPath::evaluate()'), 10],
+            [$this->getMessage(SinkType::XPath, '$_GET', 'SimpleXMLElement::xpath()'), 11],
+            [$this->getMessage(SinkType::XPath, '$_GET', 'Symfony\Component\DomCrawler\Crawler::filterXPath()'), 12],
+            [$this->getMessage(SinkType::XPath, '$_GET', 'Symfony\Component\DomCrawler\Crawler::evaluate()'), 13],
+        ]);
+    }
+
     public function testDetectsEval(): void
     {
         $this->analyse([__DIR__ . '/data/taint/eval.php'], [

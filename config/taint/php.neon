@@ -66,3 +66,8 @@ parameters:
                     exec: {type: sql, parameters: [query]}
                     querySingle: {type: sql, parameters: [query]}
                     prepare: {type: sql, parameters: [query]}
+                DOMXPath:
+                    query: {type: xpath, parameters: [expression]}
+                    evaluate: {type: xpath, parameters: [expression]}
+                SimpleXMLElement:
+                    xpath: {type: xpath, parameters: [expression]}

@@ -15,6 +15,7 @@ enum SinkType: string
     case Unserialize = 'unserialize';
     case Callable = 'callable';
     case Eval = 'eval';
+    case XPath = 'xpath';
 
     public function identifier(): string
     {
@@ -33,6 +34,7 @@ enum SinkType: string
             self::Unserialize => 'insecure deserialization',
             self::Callable => 'callable injection',
             self::Eval => 'eval injection',
+            self::XPath => 'XPath injection',
         };
     }
 }

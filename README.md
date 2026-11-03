@@ -25,6 +25,7 @@ in another file.
 | Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                 |
 | Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                    |
 | Eval injection             | `tainted.eval`        | `eval`                                                                                                          |
+| XPath injection            | `tainted.xpath`       | `DOMXPath`, `SimpleXMLElement::xpath()`, Symfony DomCrawler `filterXPath()` and `evaluate()`                    |
 
 User input is detected from:
 
