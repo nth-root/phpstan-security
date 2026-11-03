@@ -17,4 +17,8 @@ function cases(): void
     $name = htmlspecialchars($_GET['name']);
     echo $name; // safe
     exec('ls ' . $name); // unsafe (through a variable)
+    include __DIR__ . '/pages/' . basename($_GET['page']); // safe
+    file_get_contents('/var/uploads/' . basename($_GET['file'])); // safe
+    echo basename($_GET['file']); // unsafe (stripped of directories, not escaped for HTML)
+    exec('ls ' . basename($_GET['dir'])); // unsafe
 }

@@ -85,6 +85,9 @@ The analysis only follows tainted data through code it understands.
   output ends up, so XSS through an unquoted attribute or a `javascript:` URL isn't detected.
 - `ldap_escape()` counts as an LDAP sanitizer regardless of its `$flags`, so a value escaped for a DN but used in a
   filter (or the other way around) isn't detected.
+- `basename()` counts as a sanitizer for file paths, but `basename('..')` is still `..`: `'/uploads/' . basename($name)`
+  can name the parent directory, which matters for `unlink()` or `Filesystem::remove()`. Without a directory prefix, a
+  `data:` URL also passes through.
 - Only native types are trusted: a value with a native `int` type or one narrowed by `is_numeric()` isn't tainted,
   but a parameter documented as `@param int` is.
 - Parameters and return values are shared by all calls to a function: if any caller passes user input to a function

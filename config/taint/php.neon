@@ -20,6 +20,7 @@ parameters:
                 htmlentities: {parameters: [string], sanitizes: [html]}
                 escapeshellarg: {parameters: [arg], sanitizes: [shell]}
                 ldap_escape: {parameters: [value], sanitizes: [ldap]}
+                basename: {parameters: [path], sanitizes: [path, include]}
 
         sinks:
             functions:
