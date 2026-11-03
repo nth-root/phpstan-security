@@ -19,6 +19,7 @@ parameters:
                 htmlspecialchars: {parameters: [string], sanitizes: [html]}
                 htmlentities: {parameters: [string], sanitizes: [html]}
                 escapeshellarg: {parameters: [arg], sanitizes: [shell]}
+                ldap_escape: {parameters: [value], sanitizes: [ldap]}
 
         sinks:
             functions:
@@ -33,6 +34,9 @@ parameters:
                 unserialize: {type: unserialize, parameters: [data]}
                 call_user_func: {type: callable, parameters: [callback]}
                 call_user_func_array: {type: callable, parameters: [callback]}
+                ldap_search: {type: ldap, parameters: [base, filter]}
+                ldap_list: {type: ldap, parameters: [base, filter]}
+                ldap_read: {type: ldap, parameters: [base, filter]}
                 printf: {type: html, parameters: [format, values]}
                 vprintf: {type: html, parameters: [format, values]}
                 mysqli_query: {type: sql, parameters: [query]}

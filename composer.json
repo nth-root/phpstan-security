@@ -24,6 +24,7 @@
         "symfony/framework-bundle": "^7.4",
         "symfony/http-foundation": "^7.4",
         "symfony/http-kernel": "^7.4",
+        "symfony/ldap": "^7.4",
         "symfony/process": "^7.4",
         "symfony/routing": "^7.4"
     },
@@ -42,7 +43,10 @@
         ]
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "ext-ldap": "8.2"
+        }
     },
     "extra": {
         "phpstan": {

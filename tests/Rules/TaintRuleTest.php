@@ -270,6 +270,18 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsLdapInjection(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/ldap.php'], [
+            [$this->getMessage(SinkType::Ldap, '$_GET', 'ldap_search()'), 9],
+            [$this->getMessage(SinkType::Ldap, '$_GET', 'ldap_list()'), 10],
+            [$this->getMessage(SinkType::Ldap, '$_GET', 'ldap_read()'), 11],
+            [$this->getMessage(SinkType::Ldap, '$_GET', 'Symfony\Component\Ldap\LdapInterface::query()'), 12],
+            [$this->getMessage(SinkType::Ldap, '$_GET', 'Symfony\Component\Ldap\LdapInterface::query()'), 13],
+            [$this->getMessage(SinkType::Html, '$_GET', 'echo'), 14],
+        ]);
+    }
+
     public function testDetectsEval(): void
     {
         $this->analyse([__DIR__ . '/data/taint/eval.php'], [

@@ -16,6 +16,7 @@ enum SinkType: string
     case Callable = 'callable';
     case Eval = 'eval';
     case XPath = 'xpath';
+    case Ldap = 'ldap';
 
     public function identifier(): string
     {
@@ -35,6 +36,7 @@ enum SinkType: string
             self::Callable => 'callable injection',
             self::Eval => 'eval injection',
             self::XPath => 'XPath injection',
+            self::Ldap => 'LDAP injection',
         };
     }
 }

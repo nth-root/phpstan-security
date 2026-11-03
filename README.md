@@ -26,6 +26,7 @@ in another file.
 | Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                    |
 | Eval injection             | `tainted.eval`        | `eval`                                                                                                          |
 | XPath injection            | `tainted.xpath`       | `DOMXPath`, `SimpleXMLElement::xpath()`, Symfony DomCrawler `filterXPath()` and `evaluate()`                    |
+| LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                                 |
 
 User input is detected from:
 
@@ -82,6 +83,8 @@ The analysis only follows tainted data through code it understands.
 - Built-in functions that aren't configured as a [flow function](config/taint/php.neon) stop taint.
 - `htmlspecialchars()` and `htmlentities()` count as HTML sanitizers regardless of their `$flags` and of where the
   output ends up, so XSS through an unquoted attribute or a `javascript:` URL isn't detected.
+- `ldap_escape()` counts as an LDAP sanitizer regardless of its `$flags`, so a value escaped for a DN but used in a
+  filter (or the other way around) isn't detected.
 - Only native types are trusted: a value with a native `int` type or one narrowed by `is_numeric()` isn't tainted,
   but a parameter documented as `@param int` is.
 - Parameters and return values are shared by all calls to a function: if any caller passes user input to a function
