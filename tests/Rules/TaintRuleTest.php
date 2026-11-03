@@ -132,6 +132,14 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsSymfonyProcess(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/symfony_process.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'Symfony\Component\Process\Process::fromShellCommandline()'), 9],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'Symfony\Component\Process\Process::fromShellCommandline()'), 10],
+        ]);
+    }
+
     public function testDetectsUnserialize(): void
     {
         $this->analyse([__DIR__ . '/data/taint/unserialize.php'], [

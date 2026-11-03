@@ -18,7 +18,7 @@ in another file.
 |----------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------|
 | SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade and query builders |
 | Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`                                                                        |
-| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, ...                                                            |
+| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                 |
 | Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, ...                                                               |
 | File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                            |
 | Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header                                                              |
