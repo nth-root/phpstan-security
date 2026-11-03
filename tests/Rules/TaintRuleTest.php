@@ -121,6 +121,15 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsCallables(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/callable.php'], [
+            [$this->getMessage(SinkType::Callable, '$_GET', 'call_user_func()'), 7],
+            [$this->getMessage(SinkType::Callable, '$_POST', 'call_user_func_array()'), 8],
+            [$this->getMessage(SinkType::Callable, '$_GET', 'call_user_func()'), 9],
+        ]);
+    }
+
     public function testDetectsUnserialize(): void
     {
         $this->analyse([__DIR__ . '/data/taint/unserialize.php'], [

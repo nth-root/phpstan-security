@@ -13,6 +13,7 @@ enum SinkType: string
     case FileInclusion = 'include';
     case RedirectHeader = 'redirect';
     case Unserialize = 'unserialize';
+    case Callable = 'callable';
 
     public function identifier(): string
     {
@@ -29,6 +30,7 @@ enum SinkType: string
             self::FileInclusion => 'file inclusion',
             self::RedirectHeader => 'open redirect',
             self::Unserialize => 'insecure deserialization',
+            self::Callable => 'callable injection',
         };
     }
 }

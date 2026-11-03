@@ -31,6 +31,8 @@ parameters:
                 pcntl_exec: {type: shell, parameters: [path]}
                 mail: {type: shell, parameters: [additional_params]}
                 unserialize: {type: unserialize, parameters: [data]}
+                call_user_func: {type: callable, parameters: [callback]}
+                call_user_func_array: {type: callable, parameters: [callback]}
                 printf: {type: html, parameters: [format, values]}
                 vprintf: {type: html, parameters: [format, values]}
                 mysqli_query: {type: sql, parameters: [query]}
