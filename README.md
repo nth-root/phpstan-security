@@ -77,6 +77,19 @@ parameters:
 
 ## Known limitations
 
+### False positives (findings that might be safe)
+
+- Only native types are trusted: a value with a native `int` type or one narrowed by `is_numeric()` isn't tainted,
+  but a parameter documented as `@param int` is.
+- Parameters and return values are shared by all calls to a function: if any caller passes user input to a function
+  that returns its argument, the return value is considered tainted at every call site.
+- The analysis is flow-insensitive: once a variable holds user input, it is considered tainted in that function, even if
+  it is overwritten at a later point.
+
+To suppress a false positive, see [Ignoring findings](#ignoring-findings).
+
+### False negatives (vulnerabilities that aren't detected)
+
 The analysis only follows tainted data through code it understands.
 
 - `$_SERVER` and `$request->attributes` are not detected as sources yet.
@@ -88,13 +101,7 @@ The analysis only follows tainted data through code it understands.
 - `basename()` counts as a sanitizer for file paths, but `basename('..')` is still `..`: `'/uploads/' . basename($name)`
   can name the parent directory, which matters for `unlink()` or `Filesystem::remove()`. Without a directory prefix, a
   `data:` URL also passes through.
-- Only native types are trusted: a value with a native `int` type or one narrowed by `is_numeric()` isn't tainted,
-  but a parameter documented as `@param int` is.
-- Parameters and return values are shared by all calls to a function: if any caller passes user input to a function
-  that returns its argument, the return value is considered tainted at every call site.
 - Values assigned to properties (`$this->query = $input`) or array elements (`$arr['q'] = $input`) aren't followed yet.
-- The analysis is flow-insensitive: once a variable holds user input, it is considered tainted in that function, even if
-  it is overwritten at a later point.
 - Symfony route parameters are only treated as user input for routes defined with `#[Route]` attributes.
   Other routing configuration (YAML, XML, PHP) is not read.
 - Twig templates aren't analyzed, so XSS through `{{ ... |raw }}` isn't detected.
