@@ -29,6 +29,7 @@ parameters:
                 proc_open: {type: shell, parameters: [command]}
                 popen: {type: shell, parameters: [command]}
                 pcntl_exec: {type: shell, parameters: [path]}
+                mail: {type: shell, parameters: [additional_params]}
                 printf: {type: html, parameters: [format, values]}
                 vprintf: {type: html, parameters: [format, values]}
                 mysqli_query: {type: sql, parameters: [query]}
