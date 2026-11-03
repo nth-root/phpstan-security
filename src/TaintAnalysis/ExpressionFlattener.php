@@ -8,6 +8,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Concat;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -27,6 +28,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function array_keys;
 use function array_map;
 use function is_string;
 
@@ -35,6 +37,7 @@ final readonly class ExpressionFlattener
     public function __construct(
         private ReflectionProvider $reflectionProvider,
         private CallArguments $callArguments,
+        private Callees $callees,
         private TaintSpec $taintSpec
     ) {}
 
@@ -86,11 +89,11 @@ final readonly class ExpressionFlattener
         }
 
         if ($expr instanceof FuncCall && $expr->name instanceof Name && !$expr->isFirstClassCallable()) {
-            return $this->flattenFunctionCall($expr, $expr->name, $scope);
+            return [...$this->flattenFunctionCall($expr, $expr->name, $scope), ...$this->returnValues($expr, $scope)];
         }
 
         if ($expr instanceof MethodCall && $expr->name instanceof Identifier && !$expr->isFirstClassCallable()) {
-            return $this->flattenMethodCall($expr, $expr->name, $scope);
+            return [...$this->flattenMethodCall($expr, $expr->name, $scope), ...$this->returnValues($expr, $scope)];
         }
 
         if (
@@ -99,7 +102,10 @@ final readonly class ExpressionFlattener
             && $expr->name instanceof Identifier
             && !$expr->isFirstClassCallable()
         ) {
-            return $this->flattenStaticCall($expr->class, $expr->name, $scope);
+            return [
+                ...$this->flattenStaticCall($expr->class, $expr->name, $scope),
+                ...$this->returnValues($expr, $scope),
+            ];
         }
 
         return [];
@@ -164,6 +170,17 @@ final readonly class ExpressionFlattener
         $source = $this->taintSpec->getMethodSource($this->reflectionProvider->getClass($className), $name->toString());
 
         return $source === null ? [] : [TaintNode::source($source)->toString()];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function returnValues(CallLike $call, Scope $scope): array
+    {
+        return array_map(
+            fn(string $key) => TaintNode::returnValue($key)->toString(),
+            array_keys($this->callees->of($call, $scope))
+        );
     }
 
     private function canCarryTaint(Type $type): bool

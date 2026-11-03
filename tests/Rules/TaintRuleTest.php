@@ -14,6 +14,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ReturnCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\StaticCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector;
@@ -49,6 +50,7 @@ class TaintRuleTest extends RuleTestCase
             $container->getByType(HeaderSinkCollector::class),
             $container->getByType(AssignmentCollector::class),
             $container->getByType(CompoundAssignmentCollector::class),
+            $container->getByType(ReturnCollector::class),
             $container->getByType(CallArgumentCollector::class),
             $container->getByType(SymfonyRouteParameterCollector::class),
             $container->getByType(ShellExecSinkCollector::class),
@@ -276,6 +278,19 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 74],
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 87],
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 95],
+        ]);
+    }
+
+    public function testFollowsReturnValuesToTheCallSite(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/returns.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 58],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 64],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 68],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 70],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 71],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 72],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 75],
         ]);
     }
 

@@ -13,6 +13,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ReturnCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\StaticCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector;
@@ -49,6 +50,7 @@ final readonly class TaintRule implements Rule
         $assignmentsByFile = [
             $node->get(AssignmentCollector::class),
             $node->get(CompoundAssignmentCollector::class),
+            $node->get(ReturnCollector::class),
         ];
 
         foreach ($assignmentsByFile as $collected) {

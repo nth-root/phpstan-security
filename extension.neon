@@ -71,6 +71,9 @@ services:
     -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector
         tags: [phpstan.collector]
+    -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ReturnCollector
+        tags: [phpstan.collector]
 
 rules:
     - NthRoot\PhpstanSecurity\Rules\TaintRule

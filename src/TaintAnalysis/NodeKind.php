@@ -9,4 +9,5 @@ enum NodeKind: string
     case Source = 'source';
     case Variable = 'var';
     case Sanitized = 'sanitized';
+    case Return = 'return';
 }

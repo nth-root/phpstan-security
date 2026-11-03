@@ -42,6 +42,11 @@ final readonly class TaintNode
         return new self(NodeKind::Sanitized, $types . ':' . $inner);
     }
 
+    public static function returnValue(string $functionKey): self
+    {
+        return new self(NodeKind::Return, $functionKey);
+    }
+
     public function isSource(): bool
     {
         return $this->kind === NodeKind::Source;
@@ -75,6 +80,7 @@ final readonly class TaintNode
             NodeKind::Source => $this->name,
             NodeKind::Variable => substr($this->name, strrpos($this->name, ':') + 1),
             NodeKind::Sanitized => self::fromString($this->unwrap())->describe(),
+            NodeKind::Return => $this->name . '()',
         };
     }
 }

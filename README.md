@@ -71,7 +71,8 @@ The analysis only follows tainted data through code it understands.
   output ends up, so XSS through an unquoted attribute or a `javascript:` URL isn't detected.
 - Only native types are trusted: a value with a native `int` type or one narrowed by `is_numeric()` isn't tainted,
   but a parameter documented as `@param int` is.
-- Return values of user-defined functions and methods aren't followed yet.
+- Parameters and return values are shared by all calls to a function: if any caller passes user input to a function
+  that returns its argument, the return value is considered tainted at every call site.
 - Values assigned to properties (`$this->query = $input`) or array elements (`$arr['q'] = $input`) aren't followed yet.
 - The analysis is flow-insensitive: once a variable holds user input, it is considered tainted in that function, even if
   it is overwritten at a later point.
