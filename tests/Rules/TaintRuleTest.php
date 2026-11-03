@@ -176,6 +176,14 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testIgnoresValuesWhoseTypeCannotCarryAnInjection(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/types.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 29],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 60],
+        ]);
+    }
+
     public function testDetectsThroughCompoundAssignment(): void
     {
         $this->analyse([__DIR__ . '/data/taint/compound_assignment.php'], [

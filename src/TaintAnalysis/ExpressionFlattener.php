@@ -18,6 +18,13 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\Accessory\AccessoryNumericStringType;
+use PHPStan\Type\BooleanType;
+use PHPStan\Type\FloatType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\StringType;
+use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
 use function array_map;
@@ -36,6 +43,10 @@ final readonly class ExpressionFlattener
      */
     public function flatten(Expr $expr, Scope $scope): array
     {
+        if (!$this->canCarryTaint($scope->getNativeType($expr))) {
+            return [];
+        }
+
         if ($expr instanceof Variable && is_string($expr->name)) {
             $source = $this->taintSpec->getVariableSource($expr->name);
 
@@ -153,5 +164,26 @@ final readonly class ExpressionFlattener
         $source = $this->taintSpec->getMethodSource($this->reflectionProvider->getClass($className), $name->toString());
 
         return $source === null ? [] : [TaintNode::source($source)->toString()];
+    }
+
+    private function canCarryTaint(Type $type): bool
+    {
+        if ($type->isConstantScalarValue()->yes()) {
+            return false;
+        }
+
+        if ($type->isArray()->yes()) {
+            return $this->canCarryTaint($type->getIterableValueType());
+        }
+
+        $safe = TypeCombinator::union(
+            new IntegerType(),
+            new FloatType(),
+            new BooleanType(),
+            new NullType(),
+            TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
+        );
+
+        return !$safe->isSuperTypeOf($type)->yes();
     }
 }
