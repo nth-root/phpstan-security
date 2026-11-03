@@ -15,5 +15,17 @@ parameters:
                     query: {type: ldap, parameters: [dn, query]}
                 Symfony\Bundle\FrameworkBundle\Controller\AbstractController:
                     redirect: {type: redirect, parameters: [url]}
+                    file: {type: path, parameters: [file]}
+                Symfony\Component\Filesystem\Filesystem:
+                    readFile: {type: path, parameters: [filename]}
+                    dumpFile: {type: path, parameters: [filename]}
+                    appendToFile: {type: path, parameters: [filename]}
+                    remove: {type: path, parameters: [files]}
+                    copy: {type: path, parameters: [originFile, targetFile]}
+                    rename: {type: path, parameters: [origin, target]}
+                    mkdir: {type: path, parameters: [dirs]}
+                    touch: {type: path, parameters: [files]}
+                    chmod: {type: path, parameters: [files]}
+                    symlink: {type: path, parameters: [originDir, targetDir]}
                 Symfony\Component\Process\Process:
                     fromShellCommandline: {type: shell, parameters: [command]}

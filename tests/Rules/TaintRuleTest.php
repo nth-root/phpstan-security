@@ -132,6 +132,40 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsSymfonyFileAccess(): void
+    {
+        $filesystem = fn(string $method, int $line) => [
+            $this->getMessage(
+                SinkType::FilePath,
+                '$_GET',
+                sprintf('Symfony\Component\Filesystem\Filesystem::%s()', $method)
+            ),
+            $line,
+        ];
+
+        $this->analyse([__DIR__ . '/data/taint/symfony_filesystem.php'], [
+            $filesystem('readFile', 14),
+            $filesystem('dumpFile', 15),
+            $filesystem('appendToFile', 16),
+            $filesystem('remove', 17),
+            $filesystem('copy', 18),
+            $filesystem('copy', 19),
+            $filesystem('rename', 20),
+            $filesystem('mkdir', 21),
+            $filesystem('touch', 22),
+            $filesystem('chmod', 23),
+            $filesystem('symlink', 24),
+            [
+                $this->getMessage(
+                    SinkType::FilePath,
+                    'InputBag::get()',
+                    'Symfony\Bundle\FrameworkBundle\Controller\AbstractController::file()'
+                ),
+                33,
+            ],
+        ]);
+    }
+
     public function testDetectsSymfonyRedirect(): void
     {
         $this->analyse([__DIR__ . '/data/taint/symfony_redirect.php'], [
