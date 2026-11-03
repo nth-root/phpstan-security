@@ -2,8 +2,8 @@
 
 An extension for [PHPStan](https://phpstan.org/) that detects common security vulnerabilities in PHP code.
 Its main feature is [taint analysis](https://en.wikipedia.org/wiki/Taint_checking): following user input (`$_GET`,
-Symfony's and Laravel's `Request` objects and route parameters) through variables and function calls, and reporting when it reaches a
-dangerous location such as a SQL query, a shell command, or `echo`.
+Symfony's and Laravel's `Request` objects, and Symfony route parameters) through variables and function calls, and
+reporting when it reaches a dangerous location such as a SQL query, a shell command, or `echo`.
 Because it analyzes the whole project at once, it also catches input that a controller passes to a service or repository
 in another file.
 
@@ -14,19 +14,19 @@ in another file.
 
 ## Detected vulnerabilities
 
-| Vulnerability              | Identifier            | Supported sinks                                                                                                                      |
-|----------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade and query builders                      |
-| Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`, Symfony and Laravel `new Response()`                                                       |
-| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                                      |
-| Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, ..., Symfony `Filesystem`, `AbstractController::file()` and `new BinaryFileResponse()` |
-| File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                                                 |
-| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header, Symfony `AbstractController::redirect()` and `new RedirectResponse()`            |
-| Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                                      |
-| Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                                         |
-| Eval injection             | `tainted.eval`        | `eval`                                                                                                                               |
-| XPath injection            | `tainted.xpath`       | `DOMXPath`, `SimpleXMLElement::xpath()`, Symfony DomCrawler `filterXPath()` and `evaluate()`                                         |
-| LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                                                      |
+| Vulnerability              | Identifier            | Supported sinks                                                                                                                   |
+|----------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade, query builders                      |
+| Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`, Symfony and Laravel `new Response()`                                                    |
+| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                                   |
+| Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, Symfony `Filesystem`, `AbstractController::file()`, `new BinaryFileResponse()`, ... |
+| File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                                              |
+| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header, Symfony `AbstractController::redirect()`, `new RedirectResponse()`            |
+| Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                                   |
+| Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                                      |
+| Eval injection             | `tainted.eval`        | `eval`                                                                                                                            |
+| XPath injection            | `tainted.xpath`       | `DOMXPath::query()`, `DOMXPath::evaluate()`, `SimpleXMLElement::xpath()`, Symfony `Crawler::filterXPath()`, `Crawler::evaluate()` |
+| LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                                                   |
 
 User input is detected from:
 
@@ -34,6 +34,15 @@ User input is detected from:
 - Symfony's `Request` and its `query`, `request`, `cookies` and `headers` bags
 - Laravel's `Request` and its facade (`input()`, `query()`, `all()`, `header()`, ...)
 - Controller arguments that match a `{placeholder}` in a `#[Route]` attribute
+
+A value is no longer considered tainted when it:
+
+- Passes through a sanitizer for that kind of sink: `htmlspecialchars()` and `htmlentities()` for XSS,
+  `escapeshellarg()` for command injection, `ldap_escape()` for LDAP injection, and `basename()` for path traversal and
+  file inclusion. The value stays tainted for other sinks, so `exec(htmlspecialchars($input))` is still reported.
+  `escapeshellcmd()` isn't a sanitizer, because it allows argument injection.
+- Has a native type that can't carry an injection: casts like `(int)`, `int`, `float` and `bool` parameters and return
+  types, and values checked with `is_numeric()` or `in_array(..., true)`.
 
 ## Installation
 
@@ -85,6 +94,10 @@ parameters:
   that returns its argument, the return value is considered tainted at every call site.
 - The analysis is flow-insensitive: once a variable holds user input, it is considered tainted in that function, even if
   it is overwritten at a later point.
+- Responses are checked for XSS even when they aren't HTML, such as
+  `new Response($csv, 200, ['Content-Type' => 'text/csv'])` or a Laravel `Response` with an array (which becomes JSON).
+- Redirects are reported even when the URL starts with a constant path, as in `'/dashboard?tab=' . $tab`, although the
+  host can't change.
 
 To suppress a false positive, see [Ignoring findings](#ignoring-findings).
 
@@ -102,6 +115,7 @@ The analysis only follows tainted data through code it understands.
   can name the parent directory, which matters for `unlink()` or `Filesystem::remove()`. Without a directory prefix, a
   `data:` URL also passes through.
 - Values assigned to properties (`$this->query = $input`) or array elements (`$arr['q'] = $input`) aren't followed yet.
+- `foreach` loops aren't followed: in `foreach ($_GET['ids'] as $id)`, `$id` isn't considered tainted.
 - Symfony route parameters are only treated as user input for routes defined with `#[Route]` attributes.
   Other routing configuration (YAML, XML, PHP) is not read.
 - Twig templates aren't analyzed, so XSS through `{{ ... |raw }}` isn't detected.
