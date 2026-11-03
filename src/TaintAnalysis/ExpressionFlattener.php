@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
@@ -80,6 +81,15 @@ final readonly class ExpressionFlattener
             return $this->flattenMethodCall($expr, $expr->name, $scope);
         }
 
+        if (
+            $expr instanceof StaticCall
+            && $expr->class instanceof Name
+            && $expr->name instanceof Identifier
+            && !$expr->isFirstClassCallable()
+        ) {
+            return $this->flattenStaticCall($expr->class, $expr->name, $scope);
+        }
+
         return [];
     }
 
@@ -122,5 +132,21 @@ final readonly class ExpressionFlattener
         }
 
         return $nodes;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function flattenStaticCall(Name $class, Identifier $name, Scope $scope): array
+    {
+        $className = $scope->resolveName($class);
+
+        if (!$this->reflectionProvider->hasClass($className)) {
+            return [];
+        }
+
+        $source = $this->taintSpec->getMethodSource($this->reflectionProvider->getClass($className), $name->toString());
+
+        return $source === null ? [] : [TaintNode::source($source)->toString()];
     }
 }

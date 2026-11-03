@@ -8,7 +8,7 @@ class OverridingSubclass extends PDO
 {
     public function exec(string $statement): int|false
     {
-        return parent::exec($statement);
+        return parent::exec($statement); // unsafe (tainted via line 47)
     }
 }
 

@@ -15,6 +15,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\StaticCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use PHPStan\Rules\Rule;
@@ -44,6 +45,7 @@ class TaintRuleTest extends RuleTestCase
         return [
             $container->getByType(FunctionCallSinkCollector::class),
             $container->getByType(MethodCallSinkCollector::class),
+            $container->getByType(StaticCallSinkCollector::class),
             $container->getByType(HeaderSinkCollector::class),
             $container->getByType(AssignmentCollector::class),
             $container->getByType(CompoundAssignmentCollector::class),
@@ -175,6 +177,7 @@ class TaintRuleTest extends RuleTestCase
     public function testDetectsMethodCallSinks(): void
     {
         $this->analyse([__DIR__ . '/data/taint/method_calls.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::exec()'), 11],
             [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 21],
             [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 27],
             [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::exec()'), 28],
@@ -365,6 +368,25 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::selectRaw()'), 52],
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::fromRaw()'), 53],
             [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orderByRaw()'), 55],
+        ]);
+    }
+
+    public function testDetectsStaticCalls(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/static_calls.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Connection::select()'), 16],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'exec()'), 24],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'exec()'), 25],
+        ]);
+    }
+
+    public function testDetectsLaravelFacades(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_facades.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Support\Facades\DB::select()'), 10],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Support\Facades\DB::raw()'), 11],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Support\Facades\DB::select()'), 12],
+            [$this->getMessage(SinkType::Sql, 'Request::input()', 'Illuminate\Support\Facades\DB::select()'), 13],
         ]);
     }
 

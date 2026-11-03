@@ -14,6 +14,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\StaticCallSinkCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintGraph;
@@ -82,6 +83,7 @@ final readonly class TaintRule implements Rule
         $sinksByFile = [
             $node->get(FunctionCallSinkCollector::class),
             $node->get(MethodCallSinkCollector::class),
+            $node->get(StaticCallSinkCollector::class),
             $node->get(HeaderSinkCollector::class),
             $node->get(ShellExecSinkCollector::class),
             $node->get(EchoSinkCollector::class),
