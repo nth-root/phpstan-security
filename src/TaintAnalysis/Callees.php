@@ -16,6 +16,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ExtendedMethodReflection;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
@@ -32,7 +33,7 @@ final readonly class Callees
             $call->isFirstClassCallable() => [],
             $call instanceof FuncCall => $this->function($call, $scope),
             $call instanceof MethodCall && $call->name instanceof Identifier => $this->methods(
-                $this->removeNull($call, $scope)->getObjectClassReflections(),
+                $this->objectReceiverType($call, $scope)->getObjectClassReflections(),
                 $call->name->toString(),
                 $scope
             ),
@@ -72,9 +73,9 @@ final readonly class Callees
         return [$function->getName() => $function];
     }
 
-    private function removeNull(MethodCall $call, Scope $scope): Type
+    private function objectReceiverType(MethodCall $call, Scope $scope): Type
     {
-        return TypeCombinator::removeNull($scope->getType($call->var));
+        return TypeCombinator::intersect($scope->getType($call->var), new ObjectWithoutClassType());
     }
 
     /**

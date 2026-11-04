@@ -25,6 +25,7 @@ use PHPStan\Type\BooleanType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -152,7 +153,7 @@ final readonly class ExpressionFlattener
      */
     private function flattenMethodCall(MethodCall $call, Identifier $name, Scope $scope): array
     {
-        $receiverType = TypeCombinator::removeNull($scope->getType($call->var));
+        $receiverType = TypeCombinator::intersect($scope->getType($call->var), new ObjectWithoutClassType());
 
         $nodes = [];
 

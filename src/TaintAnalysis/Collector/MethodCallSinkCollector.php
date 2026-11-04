@@ -13,6 +13,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\TypeCombinator;
 
 use function sprintf;
@@ -40,7 +41,7 @@ final readonly class MethodCallSinkCollector implements Collector
         }
 
         $methodName = $node->name->toString();
-        $receiverType = TypeCombinator::removeNull($scope->getType($node->var));
+        $receiverType = TypeCombinator::intersect($scope->getType($node->var), new ObjectWithoutClassType());
 
         foreach ($receiverType->getObjectClassReflections() as $classReflection) {
             $sink = $this->taintSpec->getMethodSink($classReflection, $methodName);

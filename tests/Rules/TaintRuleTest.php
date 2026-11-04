@@ -328,6 +328,16 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsMethodCallsOnUnionsWithNonObjectTypes(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/union_receivers.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 11],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 22],
+            [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 23],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 25],
+        ]);
+    }
+
     public function testDetectsDoctrineDbalSinks(): void
     {
         $this->analyse([__DIR__ . '/data/taint/dbal.php'], [
