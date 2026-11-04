@@ -4,6 +4,8 @@ parameters:
             methods:
                 Illuminate\Http\Request: [input, query, post, cookie, header, server, json, route, string, str, all, only, except, keys, segment, segments, path, decodedPath, url, fullUrl, fullUrlWithQuery, fullUrlWithoutQuery, host, httpHost, schemeAndHttpHost, root, userAgent, bearerToken, old]
                 Illuminate\Support\Facades\Request: [input, query, post, cookie, header, server, json, route, string, str, all, only, except, keys, segment, segments, path, decodedPath, url, fullUrl, fullUrlWithQuery, fullUrlWithoutQuery, host, httpHost, schemeAndHttpHost, root, userAgent, bearerToken, old]
+                Illuminate\Foundation\Http\FormRequest: [validated, safe]
+                Illuminate\Support\ValidatedInput: [input, string, str, all, only, except, keys]
 
         sinks:
             methods:

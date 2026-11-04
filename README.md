@@ -32,7 +32,8 @@ User input is detected from:
 
 - `$_GET`, `$_POST`, `$_REQUEST`, `$_COOKIE`
 - Symfony's `Request` and its `query`, `request`, `cookies` and `headers` bags
-- Laravel's `Request` and its facade (`input()`, `query()`, `all()`, `header()`, ...)
+- Laravel's `Request` and its facade (`input()`, `query()`, `all()`, `header()`, ...), and `validated()` and `safe()` on
+  a `FormRequest`
 - Controller arguments that match a `{placeholder}` in a `#[Route]` attribute
 
 A value is no longer considered tainted when it:

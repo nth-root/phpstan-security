@@ -515,6 +515,27 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsLaravelFormRequestSources(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_form_request.php'], [
+            [$this->getMessage(SinkType::Shell, 'FormRequest::validated()', 'exec()'), 11],
+            [$this->getMessage(SinkType::Shell, 'FormRequest::validated()', 'exec()'), 12],
+            [$this->getMessage(SinkType::Shell, 'FormRequest::validated()', 'exec()'), 15],
+
+            [$this->getMessage(SinkType::Shell, 'FormRequest::safe()', 'exec()'), 17],
+            [$this->getMessage(SinkType::Shell, 'FormRequest::safe()', 'exec()'), 18],
+
+            [$this->getMessage(SinkType::Shell, 'ValidatedInput::input()', 'exec()'), 20],
+            [$this->getMessage(SinkType::Shell, 'ValidatedInput::string()', 'exec()'), 21],
+            [$this->getMessage(SinkType::Shell, 'ValidatedInput::all()', 'exec()'), 22],
+            [$this->getMessage(SinkType::Shell, 'ValidatedInput::only()', 'exec()'), 23],
+            [$this->getMessage(SinkType::Shell, 'ValidatedInput::except()', 'exec()'), 24],
+            [$this->getMessage(SinkType::Shell, 'ValidatedInput::keys()', 'exec()'), 25],
+
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'exec()'), 28],
+        ]);
+    }
+
     public function testDetectsLaravelDatabaseSinks(): void
     {
         $this->analyse([__DIR__ . '/data/taint/laravel_database.php'], [
