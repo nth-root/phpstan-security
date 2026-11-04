@@ -46,7 +46,7 @@ final readonly class MethodCallSinkCollector implements Collector
         foreach ($receiverType->getObjectClassReflections() as $classReflection) {
             $sink = $this->taintSpec->getMethodSink($classReflection, $methodName);
 
-            if ($sink === null) {
+            if ($sink === null || !$classReflection->hasMethod($methodName)) {
                 continue;
             }
 

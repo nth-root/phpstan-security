@@ -33,7 +33,7 @@ class TaintRuleTest extends RuleTestCase
 {
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__ . '/../../extension.neon'];
+        return [__DIR__ . '/../../extension.neon', __DIR__ . '/data/taint/magic_call.neon'];
     }
 
     protected function getRule(): Rule
@@ -335,6 +335,13 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::Sql, '$_GET', 'PDO::query()'), 22],
             [$this->getMessage(SinkType::Shell, 'Request::get()', 'exec()'), 23],
             [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 25],
+        ]);
+    }
+
+    public function testSkipsMethodSinksOnlyAvailableThroughMagicCall(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/magic_call.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'MagicCallReceiverWithTag::runQuery()'), 21],
         ]);
     }
 
