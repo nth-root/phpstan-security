@@ -38,9 +38,9 @@ User input is detected from:
 
 A value is no longer considered tainted when it:
 
-- Passes through a sanitizer for that kind of sink: `htmlspecialchars()` and `htmlentities()` for XSS,
-  `escapeshellarg()` for command injection, `ldap_escape()` for LDAP injection, and `basename()` for path traversal and
-  file inclusion. The value stays tainted for other sinks, so `exec(htmlspecialchars($input))` is still reported.
+- Passes through a sanitizer for that kind of sink: `htmlspecialchars()`, `htmlentities()` and Laravel's `e()` for
+  XSS, `escapeshellarg()` for command injection, `ldap_escape()` for LDAP injection, and `basename()` for path traversal
+  and file inclusion. The value stays tainted for other sinks, so `exec(htmlspecialchars($input))` is still reported.
   `escapeshellcmd()` isn't a sanitizer, because it allows argument injection.
 - Has a native type that can't carry an injection: casts like `(int)`, `int`, `float` and `bool` parameters and return
   types, and values checked with `is_numeric()` or `in_array(..., true)`.

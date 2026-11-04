@@ -7,6 +7,11 @@ parameters:
                 Illuminate\Foundation\Http\FormRequest: [validated, safe]
                 Illuminate\Support\ValidatedInput: [input, string, str, all, only, except, keys]
 
+        flows:
+            functions:
+                e: {parameters: [value], sanitizes: [html]}
+                data_get: {parameters: [target, default]}
+
         sinks:
             methods:
                 Illuminate\Http\Response:

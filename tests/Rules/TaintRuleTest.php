@@ -611,6 +611,15 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testFollowsLaravelHelpers(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_helpers.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 8],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 10],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 11],
+        ]);
+    }
+
     public function testFollowsArgumentsAcrossFiles(): void
     {
         $this->analyse([
