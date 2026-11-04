@@ -121,7 +121,7 @@ The analysis only follows tainted data through code it understands.
 - Symfony route parameters are only treated as user input for routes defined with `#[Route]` attributes.
   Other routing configuration (YAML, XML, PHP) is not read.
 - Twig templates aren't analyzed, so XSS through `{{ ... |raw }}` isn't detected.
-- Static calls on Eloquent models (`User::whereRaw()`) aren't detected yet.
+- Static calls on Eloquent models (`User::whereRaw()`) aren't detected yet ([#53]).
 - Laravel's `$request->name`, the `request('name')` helper, and methods called on `$request->string()` aren't followed
   yet ([#25], [#21]).
 - Laravel route parameters from `routes/*.php` aren't treated as user input ([#26]).
@@ -143,3 +143,4 @@ See also the [open issues labelled `false negative`][false negative issues].
 [#21]: https://github.com/nth-root/phpstan-security/issues/21
 [#25]: https://github.com/nth-root/phpstan-security/issues/25
 [#26]: https://github.com/nth-root/phpstan-security/issues/26
+[#53]: https://github.com/nth-root/phpstan-security/issues/53
