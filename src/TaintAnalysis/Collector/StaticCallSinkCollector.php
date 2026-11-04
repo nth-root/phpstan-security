@@ -48,14 +48,14 @@ final readonly class StaticCallSinkCollector implements Collector
         }
 
         $classReflection = $this->reflectionProvider->getClass($className);
-        $methodName = $node->name->toLowerString();
+        $methodName = $node->name->toString();
 
         if (!$classReflection->hasMethod($methodName)) {
             return null;
         }
 
         $method = $classReflection->getMethod($methodName, $scope);
-        $sink = $methodName === '__construct'
+        $sink = $node->name->toLowerString() === '__construct'
             ? $this->taintSpec->getConstructorSink($method->getDeclaringClass())
             : $this->taintSpec->getMethodSink($classReflection, $methodName);
 

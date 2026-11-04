@@ -39,7 +39,7 @@ final readonly class MethodCallSinkCollector implements Collector
             return null;
         }
 
-        $methodName = $node->name->toLowerString();
+        $methodName = $node->name->toString();
         $receiverType = TypeCombinator::removeNull($scope->getType($node->var));
 
         foreach ($receiverType->getObjectClassReflections() as $classReflection) {
