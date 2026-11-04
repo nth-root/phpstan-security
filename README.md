@@ -122,8 +122,8 @@ The analysis only follows tainted data through code it understands.
   Other routing configuration (YAML, XML, PHP) is not read.
 - Twig templates aren't analyzed, so XSS through `{{ ... |raw }}` isn't detected.
 - Static calls on Eloquent models (`User::whereRaw()`) aren't detected yet.
-- Laravel's `$request->name`, the `request()` helper, and methods called on `$request->string()` aren't followed yet
-  ([#25], [#21]).
+- Laravel's `$request->name`, the `request('name')` helper, and methods called on `$request->string()` aren't followed
+  yet ([#25], [#21]).
 - Laravel route parameters from `routes/*.php` aren't treated as user input ([#26]).
 - Blade templates aren't analyzed, so XSS through `{!! ... !!}` isn't detected.
 
