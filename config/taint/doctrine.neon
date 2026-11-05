@@ -19,3 +19,68 @@ parameters:
                       iterateKeyValue: {type: sql, parameters: [query]}
                       iterateAssociativeIndexed: {type: sql, parameters: [query]}
                       iterateColumn: {type: sql, parameters: [query]}
+                      executeCacheQuery: {type: sql, parameters: [sql]}
+                      insert: {type: sql, parameters: [table]}
+                      update: {type: sql, parameters: [table]}
+                      delete: {type: sql, parameters: [table]}
+                      createSavepoint: {type: sql, parameters: [savepoint]}
+                      releaseSavepoint: {type: sql, parameters: [savepoint]}
+                      rollbackSavepoint: {type: sql, parameters: [savepoint]}
+                  Doctrine\DBAL\Query\QueryBuilder:
+                      select: {type: sql, parameters: [expressions]}
+                      addSelect: {type: sql, parameters: [expression, expressions]}
+                      where: {type: sql, parameters: [predicate, predicates]}
+                      andWhere: {type: sql, parameters: [predicate, predicates]}
+                      orWhere: {type: sql, parameters: [predicate, predicates]}
+                      having: {type: sql, parameters: [predicate, predicates]}
+                      andHaving: {type: sql, parameters: [predicate, predicates]}
+                      orHaving: {type: sql, parameters: [predicate, predicates]}
+                      groupBy: {type: sql, parameters: [expression, expressions]}
+                      addGroupBy: {type: sql, parameters: [expression, expressions]}
+                      orderBy: {type: sql, parameters: [sort, order]}
+                      addOrderBy: {type: sql, parameters: [sort, order]}
+                      union: {type: sql, parameters: [part]}
+                      addUnion: {type: sql, parameters: [part]}
+                      with: {type: sql, parameters: [name, part, columns]}
+                      from: {type: sql, parameters: [table, alias]}
+                      update: {type: sql, parameters: [table]}
+                      insert: {type: sql, parameters: [table]}
+                      delete: {type: sql, parameters: [table]}
+                      join: {type: sql, parameters: [join, alias, condition]}
+                      innerJoin: {type: sql, parameters: [join, alias, condition]}
+                      leftJoin: {type: sql, parameters: [join, alias, condition]}
+                      rightJoin: {type: sql, parameters: [join, alias, condition]}
+                      set: {type: sql, parameters: [key, value]}
+                      setValue: {type: sql, parameters: [column, value]}
+                      values: {type: sql, parameters: [values]}
+                  Doctrine\ORM\EntityManagerInterface:
+                      createQuery: {type: sql, parameters: [dql]}
+                      createNativeQuery: {type: sql, parameters: [sql]}
+                  Doctrine\ORM\Query:
+                      setDQL: {type: sql, parameters: [dqlQuery]}
+                  Doctrine\ORM\NativeQuery:
+                      setSQL: {type: sql, parameters: [sql]}
+                  Doctrine\ORM\EntityRepository:
+                      createQueryBuilder: {type: sql, parameters: [alias, indexBy]}
+                  Doctrine\ORM\QueryBuilder:
+                      select: {type: sql, parameters: [select]}
+                      addSelect: {type: sql, parameters: [select]}
+                      where: {type: sql, parameters: [predicates]}
+                      andWhere: {type: sql, parameters: [where]}
+                      orWhere: {type: sql, parameters: [where]}
+                      having: {type: sql, parameters: [having]}
+                      andHaving: {type: sql, parameters: [having]}
+                      orHaving: {type: sql, parameters: [having]}
+                      groupBy: {type: sql, parameters: [groupBy]}
+                      addGroupBy: {type: sql, parameters: [groupBy]}
+                      orderBy: {type: sql, parameters: [sort, order]}
+                      addOrderBy: {type: sql, parameters: [sort, order]}
+                      add: {type: sql, parameters: [dqlPart]}
+                      from: {type: sql, parameters: [from, alias, indexBy]}
+                      update: {type: sql, parameters: [update, alias]}
+                      delete: {type: sql, parameters: [delete, alias]}
+                      join: {type: sql, parameters: [join, alias, conditionType, condition, indexBy]}
+                      innerJoin: {type: sql, parameters: [join, alias, conditionType, condition, indexBy]}
+                      leftJoin: {type: sql, parameters: [join, alias, conditionType, condition, indexBy]}
+                      indexBy: {type: sql, parameters: [indexBy]}
+                      set: {type: sql, parameters: [key, value]}

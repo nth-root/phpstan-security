@@ -16,7 +16,7 @@ in another file.
 
 | Vulnerability              | Identifier            | Supported sinks                                                                                                                   |
 |----------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL `Connection`, Laravel connections, the `DB` facade, query builders                      |
+| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL and ORM, Laravel connections, the `DB` facade, query builders                           |
 | Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`, Symfony and Laravel `new Response()`                                                    |
 | Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                                   |
 | Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, Symfony `Filesystem`, `AbstractController::file()`, `new BinaryFileResponse()`, ... |
