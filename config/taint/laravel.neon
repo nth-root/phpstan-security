@@ -38,16 +38,7 @@ parameters:
                     affectingStatement: {type: sql, parameters: [query]}
                     unprepared: {type: sql, parameters: [query]}
                     raw: {type: sql, parameters: [value]}
-                Illuminate\Database\Query\Builder:
-                    whereRaw: {type: sql, parameters: [sql]}
-                    orWhereRaw: {type: sql, parameters: [sql]}
-                    havingRaw: {type: sql, parameters: [sql]}
-                    orHavingRaw: {type: sql, parameters: [sql]}
-                    orderByRaw: {type: sql, parameters: [sql]}
-                    groupByRaw: {type: sql, parameters: [sql]}
-                    selectRaw: {type: sql, parameters: [expression]}
-                    fromRaw: {type: sql, parameters: [expression]}
-                Illuminate\Database\Eloquent\Builder:
+                Illuminate\Contracts\Database\Query\Builder:
                     whereRaw: {type: sql, parameters: [sql]}
                     orWhereRaw: {type: sql, parameters: [sql]}
                     havingRaw: {type: sql, parameters: [sql]}

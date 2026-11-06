@@ -689,6 +689,14 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsLaravelRelationSinks(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_relations.php'], [
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::whereRaw()'), 30],
+            [$this->getMessage(SinkType::Sql, '$_GET', 'Illuminate\Database\Query\Builder::orderByRaw()'), 31],
+        ]);
+    }
+
     public function testDetectsStaticCalls(): void
     {
         $this->analyse([__DIR__ . '/data/taint/static_calls.php'], [
