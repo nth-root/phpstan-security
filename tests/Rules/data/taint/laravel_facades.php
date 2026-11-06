@@ -12,6 +12,8 @@ function cases(): void
     DB::select(bindings: [], query: $_GET['sql']); // unsafe
     DB::select(Request::input('sql')); // unsafe
     DB::select(DB::raw($_GET['sql'])); // unsafe (reported on raw())
+    DB::selectOne($_GET['sql']); // unsafe (camel-cased @method tag)
+    DB::affectingStatement($_GET['sql']); // unsafe (camel-cased @method tag)
 }
 
 function safe(): void
