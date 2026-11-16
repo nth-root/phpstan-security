@@ -13,7 +13,46 @@ parameters:
                 data_get: {parameters: [target, default]}
 
         sinks:
+            functions:
+                redirect: {type: redirect, parameters: [to]}
+                response: {type: html, parameters: [content]}
+
             methods:
+                Illuminate\View\Compilers\BladeCompiler:
+                    render: {type: eval, parameters: [string]}
+                    compileString: {type: eval, parameters: [value]}
+                Illuminate\Support\Facades\Blade:
+                    render: {type: eval, parameters: [string]}
+                    compileString: {type: eval, parameters: [value]}
+                Illuminate\Process\PendingProcess:
+                    command: {type: shell, parameters: [command]}
+                    run: {type: shell, parameters: [command]}
+                    start: {type: shell, parameters: [command]}
+                Illuminate\Support\Facades\Process:
+                    command: {type: shell, parameters: [command]}
+                    run: {type: shell, parameters: [command]}
+                    start: {type: shell, parameters: [command]}
+                Illuminate\Routing\Redirector:
+                    to: {type: redirect, parameters: [path]}
+                    away: {type: redirect, parameters: [path]}
+                Illuminate\Support\Facades\Redirect:
+                    to: {type: redirect, parameters: [path]}
+                    away: {type: redirect, parameters: [path]}
+                Illuminate\Contracts\Filesystem\Filesystem:
+                    get: {type: path, parameters: [path]}
+                    put: {type: path, parameters: [path]}
+                    putFileAs: {type: path, parameters: [path, name]}
+                    delete: {type: path, parameters: [paths]}
+                Illuminate\Support\Facades\Storage:
+                    get: {type: path, parameters: [path]}
+                    put: {type: path, parameters: [path]}
+                    putFileAs: {type: path, parameters: [path, name]}
+                    delete: {type: path, parameters: [paths]}
+                Illuminate\Http\UploadedFile:
+                    store: {type: path, parameters: [path]}
+                    storePublicly: {type: path, parameters: [path]}
+                    storeAs: {type: path, parameters: [path, name]}
+                    storePubliclyAs: {type: path, parameters: [path, name]}
                 Illuminate\Http\Response:
                     __construct: {type: html, parameters: [content]}
                 Illuminate\Database\ConnectionInterface:
