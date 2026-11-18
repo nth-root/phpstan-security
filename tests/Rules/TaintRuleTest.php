@@ -706,6 +706,42 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testDetectsLaravelFrameworkSinks(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/laravel_framework_sinks.php'], [
+            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\Support\\Facades\\Blade::render()'), 17],
+            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\Support\\Facades\\Blade::compileString()'), 18],
+            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\View\\Compilers\\BladeCompiler::render()'), 19],
+            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\View\\Compilers\\BladeCompiler::compileString()'), 20],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Support\\Facades\\Process::run()'), 22],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Support\\Facades\\Process::start()'), 23],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Support\\Facades\\Process::command()'), 24],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Process\\PendingProcess::run()'), 25],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Process\\PendingProcess::start()'), 26],
+            [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Process\\PendingProcess::command()'), 27],
+            [$this->getMessage(SinkType::RedirectHeader, 'Request::input()', 'redirect()'), 29],
+            [$this->getMessage(SinkType::RedirectHeader, 'Request::input()', 'Illuminate\\Routing\\Redirector::to()'), 30],
+            [$this->getMessage(SinkType::RedirectHeader, 'Request::input()', 'Illuminate\\Routing\\Redirector::away()'), 31],
+            [$this->getMessage(SinkType::RedirectHeader, 'Request::input()', 'Illuminate\\Support\\Facades\\Redirect::to()'), 32],
+            [$this->getMessage(SinkType::RedirectHeader, 'Request::input()', 'Illuminate\\Support\\Facades\\Redirect::away()'), 33],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Support\\Facades\\Storage::get()'), 35],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Support\\Facades\\Storage::put()'), 36],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Support\\Facades\\Storage::putFileAs()'), 37],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Support\\Facades\\Storage::putFileAs()'), 38],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Support\\Facades\\Storage::delete()'), 39],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Contracts\\Filesystem\\Filesystem::get()'), 40],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Contracts\\Filesystem\\Filesystem::put()'), 41],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Contracts\\Filesystem\\Filesystem::putFileAs()'), 42],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Contracts\\Filesystem\\Filesystem::delete()'), 43],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Http\\UploadedFile::store()'), 45],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Http\\UploadedFile::storePublicly()'), 46],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Http\\UploadedFile::storeAs()'), 47],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Http\\UploadedFile::storeAs()'), 48],
+            [$this->getMessage(SinkType::FilePath, 'Request::input()', 'Illuminate\\Http\\UploadedFile::storePubliclyAs()'), 49],
+            [$this->getMessage(SinkType::Html, 'Request::input()', 'response()'), 51],
+        ]);
+    }
+
     public function testDetectsLaravelResponseConstructors(): void
     {
         $this->analyse([__DIR__ . '/data/taint/laravel_response.php'], [
