@@ -14,20 +14,22 @@ in another file.
 
 ## Detected vulnerabilities
 
-| Vulnerability              | Identifier            | Supported sinks                                                                                                                   |
-|----------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| SQL injection              | `tainted.sql`         | `PDO`, `mysqli`, `SQLite3`, Doctrine DBAL and ORM, Laravel connections, the `DB` facade, query builders                           |
-| Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, `vprintf()`, Symfony and Laravel `new Response()`                                                    |
-| Command injection          | `tainted.shell`       | `exec()`, `system()`, `shell_exec()`, backticks, Symfony `Process::fromShellCommandline()`, ...                                   |
-| Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, Symfony `Filesystem`, `AbstractController::file()`, `new BinaryFileResponse()`, ... |
-| File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                                              |
-| Open redirect              | `tainted.redirect`    | `header()` with a `Location:` or `Refresh:` header, Symfony `AbstractController::redirect()`, `new RedirectResponse()`            |
-| Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                                   |
-| Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                                      |
-| Eval injection             | `tainted.eval`        | `eval`                                                                                                                            |
-| Template injection (SSTI)  | `tainted.template`    | Laravel `Blade::render()`, `Blade::compileString()`                                                                               |
-| XPath injection            | `tainted.xpath`       | `DOMXPath::query()`, `DOMXPath::evaluate()`, `SimpleXMLElement::xpath()`, Symfony `Crawler::filterXPath()`, `Crawler::evaluate()` |
-| LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                                                   |
+| Vulnerability              | Identifier            | Example sinks                                                                                                 |
+|----------------------------|-----------------------|---------------------------------------------------------------------------------------------------------------|
+| SQL injection              | `tainted.sql`         | `PDO::query()`, `mysqli_query()`, Doctrine `Connection::executeQuery()`, Laravel `DB::select()`, `whereRaw()` |
+| Cross-site scripting (XSS) | `tainted.html`        | `echo`, `print`, `printf()`, Symfony `new Response()`, Laravel `response()`                                   |
+| Command injection          | `tainted.shell`       | `exec()`, `system()`, backticks, Symfony `Process::fromShellCommandline()`, Laravel `Process::run()`          |
+| Path traversal, SSRF       | `tainted.path`        | `file_get_contents()`, `fopen()`, `unlink()`, Symfony `Filesystem`, Laravel `Storage`                         |
+| File inclusion             | `tainted.include`     | `include`, `include_once`, `require`, `require_once`                                                          |
+| Open redirect              | `tainted.redirect`    | `header('Location: ...')`, Symfony `new RedirectResponse()`, Laravel `redirect()`                             |
+| Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                               |
+| Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                  |
+| Eval injection             | `tainted.eval`        | `eval`                                                                                                        |
+| Template injection (SSTI)  | `tainted.template`    | Laravel `Blade::render()`                                                                                     |
+| XPath injection            | `tainted.xpath`       | `DOMXPath::query()`, `SimpleXMLElement::xpath()`, Symfony `Crawler::filterXPath()`                            |
+| LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                               |
+
+More sinks are listed in [`config/taint/`](config/taint/).
 
 User input is detected from:
 
