@@ -25,7 +25,7 @@ in another file.
 | Insecure deserialization   | `tainted.unserialize` | `unserialize()`                                                                                                                   |
 | Callable injection         | `tainted.callable`    | `call_user_func()`, `call_user_func_array()`                                                                                      |
 | Eval injection             | `tainted.eval`        | `eval`                                                                                                                            |
-| Template injection (SSTI)  | `tainted.eval`        | Laravel `Blade::render()`, `Blade::compileString()`                                                                               |
+| Template injection (SSTI)  | `tainted.template`    | Laravel `Blade::render()`, `Blade::compileString()`                                                                               |
 | XPath injection            | `tainted.xpath`       | `DOMXPath::query()`, `DOMXPath::evaluate()`, `SimpleXMLElement::xpath()`, Symfony `Crawler::filterXPath()`, `Crawler::evaluate()` |
 | LDAP injection             | `tainted.ldap`        | `ldap_search()`, `ldap_list()`, `ldap_read()`, Symfony `LdapInterface::query()`                                                   |
 

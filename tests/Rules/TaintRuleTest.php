@@ -709,10 +709,10 @@ class TaintRuleTest extends RuleTestCase
     public function testDetectsLaravelFrameworkSinks(): void
     {
         $this->analyse([__DIR__ . '/data/taint/laravel_framework_sinks.php'], [
-            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\Support\\Facades\\Blade::render()'), 17],
-            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\Support\\Facades\\Blade::compileString()'), 18],
-            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\View\\Compilers\\BladeCompiler::render()'), 19],
-            [$this->getMessage(SinkType::Eval, 'Request::input()', 'Illuminate\\View\\Compilers\\BladeCompiler::compileString()'), 20],
+            [$this->getMessage(SinkType::Template, 'Request::input()', 'Illuminate\\Support\\Facades\\Blade::render()'), 17],
+            [$this->getMessage(SinkType::Template, 'Request::input()', 'Illuminate\\Support\\Facades\\Blade::compileString()'), 18],
+            [$this->getMessage(SinkType::Template, 'Request::input()', 'Illuminate\\View\\Compilers\\BladeCompiler::render()'), 19],
+            [$this->getMessage(SinkType::Template, 'Request::input()', 'Illuminate\\View\\Compilers\\BladeCompiler::compileString()'), 20],
             [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Support\\Facades\\Process::run()'), 22],
             [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Support\\Facades\\Process::start()'), 23],
             [$this->getMessage(SinkType::Shell, 'Request::input()', 'Illuminate\\Support\\Facades\\Process::command()'), 24],

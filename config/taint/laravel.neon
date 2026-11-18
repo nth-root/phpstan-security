@@ -19,11 +19,11 @@ parameters:
 
             methods:
                 Illuminate\View\Compilers\BladeCompiler:
-                    render: {type: eval, parameters: [string]}
-                    compileString: {type: eval, parameters: [value]}
+                    render: {type: template, parameters: [string]}
+                    compileString: {type: template, parameters: [value]}
                 Illuminate\Support\Facades\Blade:
-                    render: {type: eval, parameters: [string]}
-                    compileString: {type: eval, parameters: [value]}
+                    render: {type: template, parameters: [string]}
+                    compileString: {type: template, parameters: [value]}
                 Illuminate\Process\PendingProcess:
                     command: {type: shell, parameters: [command]}
                     run: {type: shell, parameters: [command]}
