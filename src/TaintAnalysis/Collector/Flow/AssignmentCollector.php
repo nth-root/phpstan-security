@@ -2,32 +2,34 @@
 
 declare(strict_types=1);
 
-namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector;
+namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\FunctionKey;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 
+use function is_string;
+
 /**
- * @implements Collector<Return_, array{to: string, from: string[]}>
+ * @implements Collector<Assign, array{to: string, from: string[]}>
  */
-final readonly class ReturnCollector implements Collector
+final readonly class AssignmentCollector implements Collector
 {
     public function __construct(private ExpressionFlattener $expressionFlattener) {}
 
     public function getNodeType(): string
     {
-        return Return_::class;
+        return Assign::class;
     }
 
     public function processNode(Node $node, Scope $scope): ?array
     {
-        // Closures share the enclosing function's key, so their returns would count as its return value
-        if ($node->expr === null || $scope->isInAnonymousFunction()) {
+        if (!$node->var instanceof Variable || !is_string($node->var->name)) {
             return null;
         }
 
@@ -38,7 +40,7 @@ final readonly class ReturnCollector implements Collector
         }
 
         return [
-            'to' => TaintNode::returnValue(FunctionKey::of($scope))->toString(),
+            'to' => TaintNode::variable(FunctionKey::of($scope), $node->var->name)->toString(),
             'from' => $from,
         ];
     }

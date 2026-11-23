@@ -37,49 +37,49 @@ services:
         class: NthRoot\PhpstanSecurity\TaintAnalysis\TaintSpec
         arguments: [%taint%]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EchoSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\EchoSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\PrintSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\PrintSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ShellExecSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\ShellExecSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\FunctionCallSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\FunctionCallSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\MethodCallSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\MethodCallSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\StaticCallSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\StaticCallSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\HeaderSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\HeaderSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\IncludeSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\IncludeSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\EvalSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\EvalSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\InstantiationSinkCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\InstantiationSinkCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\AssignmentCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\AssignmentCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CallArgumentCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\CallArgumentCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\SymfonyRouteParameterCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\SymfonyRouteParameterCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\CompoundAssignmentCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\CompoundAssignmentCollector
         tags: [phpstan.collector]
     -
-        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\ReturnCollector
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\ReturnCollector
         tags: [phpstan.collector]
 
 rules:

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector;
+namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\FunctionKey;

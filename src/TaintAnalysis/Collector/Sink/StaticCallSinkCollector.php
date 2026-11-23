@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector;
+namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintSpec;
 use PhpParser\Node;
-use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
@@ -18,25 +19,25 @@ use PHPStan\Reflection\ReflectionProvider;
 use function sprintf;
 
 /**
- * @implements Collector<New_, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements Collector<StaticCall, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
  */
-final readonly class InstantiationSinkCollector implements Collector
+final readonly class StaticCallSinkCollector implements Collector
 {
     public function __construct(
-        private ReflectionProvider $reflectionProvider,
         private ExpressionFlattener $expressionFlattener,
         private CallArguments $callArguments,
+        private ReflectionProvider $reflectionProvider,
         private TaintSpec $taintSpec
     ) {}
 
     public function getNodeType(): string
     {
-        return New_::class;
+        return StaticCall::class;
     }
 
     public function processNode(Node $node, Scope $scope): ?array
     {
-        if (!$node->class instanceof Name) {
+        if (!$node->class instanceof Name || !$node->name instanceof Identifier || $node->isFirstClassCallable()) {
             return null;
         }
 
@@ -46,14 +47,17 @@ final readonly class InstantiationSinkCollector implements Collector
             return null;
         }
 
-        $class = $this->reflectionProvider->getClass($className);
+        $classReflection = $this->reflectionProvider->getClass($className);
+        $methodName = $node->name->toString();
 
-        if (!$class->hasConstructor()) {
+        if (!$classReflection->hasMethod($methodName)) {
             return null;
         }
 
-        $constructor = $class->getConstructor();
-        $sink = $this->taintSpec->getConstructorSink($constructor->getDeclaringClass());
+        $method = $classReflection->getMethod($methodName, $scope);
+        $sink = $node->name->toLowerString() === '__construct'
+            ? $this->taintSpec->getConstructorSink($method->getDeclaringClass())
+            : $this->taintSpec->getMethodSink($classReflection, $methodName);
 
         if ($sink === null) {
             return null;
@@ -61,15 +65,15 @@ final readonly class InstantiationSinkCollector implements Collector
 
         $sources = [];
 
-        foreach ($this->callArguments->ofMethodCall($node, $constructor, $scope, $sink->parameters) as $arg) {
+        foreach ($this->callArguments->ofMethodCall($node, $method, $scope, $sink->parameters) as $arg) {
             $sources = [...$sources, ...$this->expressionFlattener->flattenSinkArgument($arg, $sink->type, $scope)];
         }
 
         return [
-            'sink' => sprintf('new %s()', $class->getName()),
+            'sink' => sprintf('%s::%s()', $method->getDeclaringClass()->getName(), $method->getName()),
             'type' => $sink->type->value,
             'sources' => $sources,
-            'line' => $node->getStartLine(),
+            'line' => $node->name->getStartLine(),
         ];
     }
 }
