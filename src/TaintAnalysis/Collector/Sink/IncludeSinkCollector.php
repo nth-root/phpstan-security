@@ -9,13 +9,12 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Include_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 use RuntimeException;
 
 /**
- * @implements Collector<Include_, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements SinkCollector<Include_>
  */
-final readonly class IncludeSinkCollector implements Collector
+final readonly class IncludeSinkCollector implements SinkCollector
 {
     public function __construct(private ExpressionFlattener $expressionFlattener) {}
 

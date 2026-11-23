@@ -6,21 +6,19 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
-use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintSpec;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 use PHPStan\Reflection\ReflectionProvider;
 
 use function sprintf;
 
 /**
- * @implements Collector<FuncCall, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements SinkCollector<FuncCall>
  */
-final readonly class FunctionCallSinkCollector implements Collector
+final readonly class FunctionCallSinkCollector implements SinkCollector
 {
     public function __construct(
         private ReflectionProvider $reflectionProvider,

@@ -6,22 +6,20 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
-use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintSpec;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\TypeCombinator;
 
 use function sprintf;
 
 /**
- * @implements Collector<MethodCall, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements SinkCollector<MethodCall>
  */
-final readonly class MethodCallSinkCollector implements Collector
+final readonly class MethodCallSinkCollector implements SinkCollector
 {
     public function __construct(
         private ExpressionFlattener $expressionFlattener,

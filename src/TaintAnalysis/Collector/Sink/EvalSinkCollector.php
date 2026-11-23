@@ -9,12 +9,11 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Eval_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 
 /**
- * @implements Collector<Eval_, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements SinkCollector<Eval_>
  */
-final readonly class EvalSinkCollector implements Collector
+final readonly class EvalSinkCollector implements SinkCollector
 {
     public function __construct(private ExpressionFlattener $expressionFlattener) {}
 

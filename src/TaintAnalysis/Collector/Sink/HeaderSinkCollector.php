@@ -15,16 +15,15 @@ use PhpParser\Node\InterpolatedStringPart;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 use PHPStan\Reflection\ReflectionProvider;
 
 use function sprintf;
 use function stripos;
 
 /**
- * @implements Collector<FuncCall, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements SinkCollector<FuncCall>
  */
-final readonly class HeaderSinkCollector implements Collector
+final readonly class HeaderSinkCollector implements SinkCollector
 {
     private const REDIRECT_HEADERS = ['location:', 'refresh:'];
 

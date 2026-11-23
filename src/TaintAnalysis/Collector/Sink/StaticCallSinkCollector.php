@@ -6,22 +6,20 @@ namespace NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink;
 
 use NthRoot\PhpstanSecurity\TaintAnalysis\CallArguments;
 use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
-use NthRoot\PhpstanSecurity\TaintAnalysis\SinkType;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintSpec;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 use PHPStan\Reflection\ReflectionProvider;
 
 use function sprintf;
 
 /**
- * @implements Collector<StaticCall, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements SinkCollector<StaticCall>
  */
-final readonly class StaticCallSinkCollector implements Collector
+final readonly class StaticCallSinkCollector implements SinkCollector
 {
     public function __construct(
         private ExpressionFlattener $expressionFlattener,

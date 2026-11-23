@@ -10,12 +10,11 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ShellExec;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 
 /**
- * @implements Collector<ShellExec, array{sink: string, type: value-of<SinkType>, sources: string[], line: int}>
+ * @implements SinkCollector<ShellExec>
  */
-final readonly class ShellExecSinkCollector implements Collector
+final readonly class ShellExecSinkCollector implements SinkCollector
 {
     public function __construct(private ExpressionFlattener $expressionFlattener) {}
 
