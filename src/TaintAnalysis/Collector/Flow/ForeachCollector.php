@@ -12,6 +12,8 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Foreach_;
 use PHPStan\Analyser\Scope;
 
+use function is_string;
+
 /**
  * @implements FlowCollector<Foreach_>
  */

@@ -12,6 +12,8 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+use function sprintf;
+
 /**
  * @phpstan-import-type TaintConfig from TaintSpec
  */

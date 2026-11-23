@@ -18,6 +18,7 @@ use function array_filter;
 use function array_values;
 use function preg_match_all;
 use function sprintf;
+use function array_map;
 
 /**
  * @implements FlowCollector<InClassMethodNode>

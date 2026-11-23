@@ -11,6 +11,8 @@ use PhpParser\Node\Expr\Include_;
 use PHPStan\Analyser\Scope;
 use RuntimeException;
 
+use function sprintf;
+
 /**
  * @implements SinkCollector<Include_>
  */

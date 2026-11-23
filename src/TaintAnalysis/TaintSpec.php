@@ -10,6 +10,8 @@ use function array_map;
 use function explode;
 use function sprintf;
 use function strtolower;
+use function array_pop;
+use function in_array;
 
 /**
  * @phpstan-type TaintConfig array{
