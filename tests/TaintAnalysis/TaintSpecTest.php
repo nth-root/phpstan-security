@@ -18,7 +18,11 @@ class TaintSpecTest extends PHPStanTestCase
         $this->spec = new TaintSpec([
             'sources' => [
                 'variables' => ['_GET'],
-                'methods' => ['Random\Randomizer' => ['getBytes']],
+                'methods' => [
+                    'Random\Randomizer' => ['getBytes'],
+                    'Exception' => ['getMessage'],
+                ],
+                'excludeClasses' => ['RuntimeException'],
             ],
             'flows' => [
                 'functions' => [
@@ -43,6 +47,13 @@ class TaintSpecTest extends PHPStanTestCase
     {
         $this->assertSame('Randomizer::getBytes()', $this->spec->getMethodSource($this->class('Random\Randomizer'), 'GETBYTES'));
         $this->assertNull($this->spec->getMethodSource($this->class('Random\Randomizer'), 'getInt'));
+    }
+
+    public function testExcludedClassesAndTheirSubclassesAreNotMethodSources(): void
+    {
+        $this->assertSame('Exception::getMessage()', $this->spec->getMethodSource($this->class('LogicException'), 'getMessage'));
+        $this->assertNull($this->spec->getMethodSource($this->class('RuntimeException'), 'getMessage'));
+        $this->assertNull($this->spec->getMethodSource($this->class('UnexpectedValueException'), 'getMessage'));
     }
 
     public function testFunctionsAreCaseInsensitive(): void

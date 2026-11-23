@@ -13,7 +13,7 @@ use function strtolower;
 
 /**
  * @phpstan-type TaintConfig array{
- *     sources: array{variables: string[], methods: array<string, string[]>},
+ *     sources: array{variables: string[], methods: array<string, string[]>, excludeClasses: string[]},
  *     flows: array{functions: array<string, FlowConfig>},
  *     sinks: array{functions: array<string, SinkConfig>, methods: array<string, array<string, SinkConfig>>},
  * }
@@ -31,6 +31,11 @@ final readonly class TaintSpec
      * @var array<string, array<lowercase-string, string>>
      */
     private array $sourceMethods;
+
+    /**
+     * @var string[]
+     */
+    private array $excludedSourceClasses;
 
     /**
      * @var array<lowercase-string, Flow>
@@ -55,6 +60,7 @@ final readonly class TaintSpec
         $sourceMethods = $functionFlows = $methodSinks = $functionSinks = [];
 
         $this->sourceVariables = $config['sources']['variables'];
+        $this->excludedSourceClasses = $config['sources']['excludeClasses'];
 
         foreach ($config['sources']['methods'] as $class => $methods) {
             foreach ($methods as $method) {
@@ -89,6 +95,12 @@ final readonly class TaintSpec
 
     public function getMethodSource(ClassReflection $class, string $method): ?string
     {
+        foreach ($this->excludedSourceClasses as $excludedClass) {
+            if ($class->is($excludedClass)) {
+                return null;
+            }
+        }
+
         foreach ($this->sourceMethods as $className => $methods) {
             if (isset($methods[strtolower($method)]) && $class->is($className)) {
                 return $methods[strtolower($method)];

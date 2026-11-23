@@ -44,3 +44,10 @@ function safe(): void
     new JsonResponse($_GET['data']); // safe (JSON, not HTML)
     new EscapedResponse($_GET['html']); // safe (declares its own constructor, which escapes)
 }
+
+function safeResponseHeaders(Response $response): void
+{
+    exec($response->headers->get('cmd')); // safe (response headers are not user input)
+    exec(implode(' ', $response->headers->all('cmd'))); // safe
+    exec(implode(' ', $response->headers->keys())); // safe
+}

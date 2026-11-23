@@ -9,6 +9,7 @@ parametersSchema:
         sources: structure([
             variables: listOf(string()),
             methods: arrayOf(listOf(string())),
+            excludeClasses: listOf(string()),
         ]),
         flows: structure([
             functions: arrayOf(structure([

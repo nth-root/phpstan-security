@@ -68,6 +68,12 @@ class TaintConfigurationTest extends PHPStanTestCase
         $this->assertParametersExist(sprintf('%s::%s()', $class, $method), $reflection->getVariants(), $parameters);
     }
 
+    #[DataProvider('getExcludedClasses')]
+    public function testExcludedSourceClassExists(string $class): void
+    {
+        $this->assertTrue($this->reflectionProvider->hasClass($class), sprintf('Class %s does not exist', $class));
+    }
+
     /**
      * @return iterable<string, array{string, string[]}>
      */
@@ -99,6 +105,16 @@ class TaintConfigurationTest extends PHPStanTestCase
             foreach ($methods as $method => $sink) {
                 yield sprintf('sink %s::%s()', $class, $method) => [$class, $method, $sink['parameters']];
             }
+        }
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function getExcludedClasses(): iterable
+    {
+        foreach (self::getConfiguration()['sources']['excludeClasses'] as $class) {
+            yield $class => [$class];
         }
     }
 
