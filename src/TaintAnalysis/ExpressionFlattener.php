@@ -16,12 +16,14 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\InterpolatedStringPart;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\BooleanType;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
@@ -33,9 +35,14 @@ use PHPStan\Type\TypeCombinator;
 use function array_keys;
 use function array_map;
 use function is_string;
+use function preg_match;
 
 final readonly class ExpressionFlattener
 {
+    private const LOCAL_PATH = '/[^/\\\\\s]';
+    private const LOCAL_URL = '#^' . self::LOCAL_PATH . '#';
+    private const LOCAL_LOCATION_HEADER = '#^location:[ \t]*' . self::LOCAL_PATH . '#i';
+
     public function __construct(
         private ReflectionProvider $reflectionProvider,
         private CallArguments $callArguments,
@@ -121,6 +128,28 @@ final readonly class ExpressionFlattener
         }
 
         return [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function flattenSinkArgument(Expr $arg, SinkType $type, Scope $scope): array
+    {
+        if ($type === SinkType::RedirectHeader && $this->prefixMatches($arg, self::LOCAL_URL, $scope)) {
+            return [];
+        }
+
+        return $this->flatten($arg, $scope);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function flattenRedirectHeader(Expr $header, Scope $scope): array
+    {
+        return $this->prefixMatches($header, self::LOCAL_LOCATION_HEADER, $scope)
+            ? []
+            : $this->flatten($header, $scope);
     }
 
     /**
@@ -214,5 +243,40 @@ final readonly class ExpressionFlattener
         );
 
         return !$safe->isSuperTypeOf($type)->yes();
+    }
+
+    private function prefixMatches(Expr $expr, string $pattern, Scope $scope): bool
+    {
+        $prefixes = $this->constantPrefixes($expr, $scope);
+
+        foreach ($prefixes as $prefix) {
+            if (preg_match($pattern, $prefix) !== 1) {
+                return false;
+            }
+        }
+
+        return $prefixes !== [];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function constantPrefixes(Expr $expr, Scope $scope): array
+    {
+        $constants = $scope->getNativeType($expr)->getConstantStrings();
+
+        if ($constants !== []) {
+            return array_map(fn(ConstantStringType $string) => $string->getValue(), $constants);
+        }
+
+        if ($expr instanceof Concat) {
+            return $this->constantPrefixes($expr->left, $scope);
+        }
+
+        if ($expr instanceof InterpolatedString && $expr->parts[0] instanceof InterpolatedStringPart) {
+            return [$expr->parts[0]->value];
+        }
+
+        return [];
     }
 }

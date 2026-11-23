@@ -25,3 +25,32 @@ function not_reported_yet(): void
 {
     header($_GET['header']);
 }
+
+function constant_paths(): void
+{
+    header('Location: /dashboard?tab=' . $_GET['tab']); // safe
+    header('Location:/dashboard?tab=' . $_GET['tab']); // safe
+    header("Location:/dashboard?tab={$_GET['tab']}"); // safe
+    header('Location: ' . '/dashboard?tab=' . $_GET['tab']); // safe
+
+    $path = '/dashboard?tab=';
+    header('Location: ' . $path . $_GET['tab']); // safe
+}
+
+function unsafe_prefixes(bool $flag): void
+{
+    header('Location: /' . $_GET['url']); // unsafe
+    header('Location: //' . $_GET['url']); // unsafe
+    header('Location: /\\' . $_GET['url']); // unsafe
+    header("Location: /\t/" . $_GET['url']); // unsafe (browsers strip the tab)
+    header('Location: ' . ($flag ? '/dashboard?tab=' : '/') . $_GET['url']); // unsafe
+    header('Refresh: 0; url=/dashboard?tab=' . $_GET['tab']); // unsafe (only Location is handled)
+}
+
+/**
+ * @param '/dashboard?tab=' $prefix
+ */
+function documented_prefix(string $prefix): void
+{
+    header('Location: ' . $prefix . $_GET['tab']); // unsafe (PHPDoc types aren't trusted)
+}

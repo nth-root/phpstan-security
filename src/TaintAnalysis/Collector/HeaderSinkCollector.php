@@ -64,7 +64,7 @@ final readonly class HeaderSinkCollector implements Collector
         return [
             'sink' => sprintf('%s()', $functionName),
             'type' => SinkType::RedirectHeader->value,
-            'sources' => $this->expressionFlattener->flatten($args[0], $scope),
+            'sources' => $this->expressionFlattener->flattenRedirectHeader($args[0], $scope),
             'line' => $node->getStartLine(),
         ];
     }

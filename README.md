@@ -100,8 +100,7 @@ parameters:
   it is overwritten at a later point ([#5]).
 - Responses are checked for XSS even when they aren't HTML ([#7]), such as
   `new Response($csv, 200, ['Content-Type' => 'text/csv'])` or a Laravel `Response` with an array (which becomes JSON).
-- Redirects are reported even when the URL starts with a constant path, as in `'/dashboard?tab=' . $tab`, although the
-  host can't change ([#8]).
+- Redirects to a constant path are reported if the URL is stored in a variable or sent in a `Refresh` header.
 
 See also the [open issues labelled `false positive`][false positive issues].
 To suppress a false positive, see [Ignoring findings](#ignoring-findings).

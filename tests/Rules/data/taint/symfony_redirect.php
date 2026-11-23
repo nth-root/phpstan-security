@@ -17,4 +17,14 @@ class RedirectController extends AbstractController
     {
         return $this->redirect('/dashboard', $request->query->get('status')); // safe (only the URL is a sink)
     }
+
+    public function constantPath(Request $request): Response
+    {
+        return $this->redirect('/dashboard?tab=' . $request->query->get('tab')); // safe
+    }
+
+    public function protocolRelative(Request $request): Response
+    {
+        return $this->redirect('/' . $request->query->get('next')); // unsafe
+    }
 }

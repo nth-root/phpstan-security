@@ -215,6 +215,14 @@ class TaintRuleTest extends RuleTestCase
                 ),
                 13,
             ],
+            [
+                $this->getMessage(
+                    SinkType::RedirectHeader,
+                    'InputBag::get()',
+                    'Symfony\Bundle\FrameworkBundle\Controller\AbstractController::redirect()'
+                ),
+                28,
+            ],
         ]);
     }
 
@@ -522,6 +530,13 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 11],
             [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 12],
             [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 15],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 42],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 43],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 44],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 45],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 46],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 47],
+            [$this->getMessage(SinkType::RedirectHeader, '$_GET', 'header()'), 55],
         ]);
     }
 

@@ -62,7 +62,7 @@ final readonly class InstantiationSinkCollector implements Collector
         $sources = [];
 
         foreach ($this->callArguments->ofMethodCall($node, $constructor, $scope, $sink->parameters) as $arg) {
-            $sources = [...$sources, ...$this->expressionFlattener->flatten($arg, $scope)];
+            $sources = [...$sources, ...$this->expressionFlattener->flattenSinkArgument($arg, $sink->type, $scope)];
         }
 
         return [
