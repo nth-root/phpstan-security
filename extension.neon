@@ -15,6 +15,7 @@ parametersSchema:
             functions: arrayOf(structure([
                 parameters: listOf(string()),
                 ?sanitizes: listOf(anyOf('sql', 'html', 'shell', 'include', 'path', 'redirect', 'unserialize', 'callable', 'eval', 'xpath', 'ldap', 'template')),
+                ?valuesOnly: bool(),
             ])),
         ]),
         sinks: structure([
@@ -80,6 +81,9 @@ services:
         tags: [phpstan.collector]
     -
         class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\ReturnCollector
+        tags: [phpstan.collector]
+    -
+        class: NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\ForeachCollector
         tags: [phpstan.collector]
 
 rules:

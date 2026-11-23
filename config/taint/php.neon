@@ -13,7 +13,7 @@ parameters:
                 strtoupper: {parameters: [string]}
                 str_replace: {parameters: [replace, subject]}
                 sprintf: {parameters: [format, values]}
-                implode: {parameters: [separator, array]}
+                implode: {parameters: [separator, array], valuesOnly: true}
                 explode: {parameters: [string]}
                 escapeshellcmd: {parameters: [command]}
                 htmlspecialchars: {parameters: [string], sanitizes: [html]}

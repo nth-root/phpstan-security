@@ -167,6 +167,10 @@ final readonly class ExpressionFlattener
         $nodes = [];
 
         foreach ($this->callArguments->ofFunctionCall($call, $name, $scope, $flow->parameters) as $arg) {
+            if ($flow->valuesOnly && !$this->valuesCanCarryTaint($scope->getNativeType($arg))) {
+                continue;
+            }
+
             $nodes = [...$nodes, ...$this->flatten($arg, $scope)];
         }
 
@@ -231,7 +235,8 @@ final readonly class ExpressionFlattener
         }
 
         if ($type->isArray()->yes()) {
-            return $this->canCarryTaint($type->getIterableValueType());
+            return $this->canCarryTaint($type->getIterableKeyType())
+                || $this->canCarryTaint($type->getIterableValueType());
         }
 
         $safe = TypeCombinator::union(
@@ -243,6 +248,11 @@ final readonly class ExpressionFlattener
         );
 
         return !$safe->isSuperTypeOf($type)->yes();
+    }
+
+    private function valuesCanCarryTaint(Type $type): bool
+    {
+        return !$type->isArray()->yes() || $this->canCarryTaint($type->getIterableValueType());
     }
 
     private function prefixMatches(Expr $expr, string $pattern, Scope $scope): bool

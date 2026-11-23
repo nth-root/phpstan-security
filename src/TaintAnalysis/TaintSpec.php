@@ -17,7 +17,7 @@ use function strtolower;
  *     flows: array{functions: array<string, FlowConfig>},
  *     sinks: array{functions: array<string, SinkConfig>, methods: array<string, array<string, SinkConfig>>},
  * }
- * @phpstan-type FlowConfig array{parameters: string[], sanitizes?: list<value-of<SinkType>>}
+ * @phpstan-type FlowConfig array{parameters: string[], sanitizes?: list<value-of<SinkType>>, valuesOnly?: bool}
  * @phpstan-type SinkConfig array{type: value-of<SinkType>, parameters: string[]}
  */
 final readonly class TaintSpec
@@ -69,7 +69,11 @@ final readonly class TaintSpec
         }
 
         foreach ($config['flows']['functions'] as $function => $flow) {
-            $functionFlows[strtolower($function)] = new Flow($flow['parameters'], array_map(SinkType::from(...), $flow['sanitizes'] ?? []));
+            $functionFlows[strtolower($function)] = new Flow(
+                $flow['parameters'],
+                array_map(SinkType::from(...), $flow['sanitizes'] ?? []),
+                $flow['valuesOnly'] ?? false
+            );
         }
 
         foreach ($config['sinks']['methods'] as $class => $methods) {

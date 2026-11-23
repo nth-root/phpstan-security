@@ -7,6 +7,7 @@ namespace NthRoot\PhpstanSecurity\Rules;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\CallArgumentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\CompoundAssignmentCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\ForeachCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\ReturnCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\SymfonyRouteParameterCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\EchoSinkCollector;
@@ -55,6 +56,7 @@ final readonly class TaintRule implements Rule
             $node->get(ReturnCollector::class),
             $node->get(CallArgumentCollector::class),
             $node->get(SymfonyRouteParameterCollector::class),
+            $node->get(ForeachCollector::class),
         ];
 
         foreach ($assignmentListsByFile as $collected) {

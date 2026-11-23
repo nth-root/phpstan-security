@@ -8,6 +8,7 @@ use NthRoot\PhpstanSecurity\Rules\TaintRule;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\AssignmentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\CallArgumentCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\CompoundAssignmentCollector;
+use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\ForeachCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\ReturnCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Flow\SymfonyRouteParameterCollector;
 use NthRoot\PhpstanSecurity\TaintAnalysis\Collector\Sink\EchoSinkCollector;
@@ -61,6 +62,7 @@ class TaintRuleTest extends RuleTestCase
             $container->getByType(IncludeSinkCollector::class),
             $container->getByType(EvalSinkCollector::class),
             $container->getByType(InstantiationSinkCollector::class),
+            $container->getByType(ForeachCollector::class),
         ];
     }
 
@@ -811,6 +813,16 @@ class TaintRuleTest extends RuleTestCase
             [$this->getMessage(SinkType::FilePath, '$_GET', 'file_get_contents()'), 7],
             [$this->getMessage(SinkType::FilePath, '$_GET', 'file_get_contents()'), 8],
             [$this->getMessage(SinkType::FilePath, '$_GET', 'copy()'), 9],
+        ]);
+    }
+
+    public function testFollowsForeachLoops(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/foreach.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 6],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 10],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 22],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 31],
         ]);
     }
 
