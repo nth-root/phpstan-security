@@ -11,14 +11,13 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 
 use function is_string;
 
 /**
- * @implements Collector<Assign, array{to: string, from: string[]}>
+ * @implements FlowCollector<Assign>
  */
-final readonly class AssignmentCollector implements Collector
+final readonly class AssignmentCollector implements FlowCollector
 {
     public function __construct(private ExpressionFlattener $expressionFlattener) {}
 
@@ -39,9 +38,9 @@ final readonly class AssignmentCollector implements Collector
             return null;
         }
 
-        return [
+        return [[
             'to' => TaintNode::variable(FunctionKey::of($scope), $node->var->name)->toString(),
             'from' => $from,
-        ];
+        ]];
     }
 }

@@ -8,7 +8,6 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\FunctionKey;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 use PHPStan\Node\InClassMethodNode;
 use PHPStan\Reflection\AttributeReflection;
 use PHPStan\Reflection\ExtendedParameterReflection;
@@ -21,9 +20,9 @@ use function preg_match_all;
 use function sprintf;
 
 /**
- * @implements Collector<InClassMethodNode, list<array{to: string, from: string[]}>>
+ * @implements FlowCollector<InClassMethodNode>
  */
-final readonly class SymfonyRouteParameterCollector implements Collector
+final readonly class SymfonyRouteParameterCollector implements FlowCollector
 {
     public function __construct(private ReflectionProvider $reflectionProvider) {}
 

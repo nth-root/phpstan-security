@@ -10,12 +10,11 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 
 /**
- * @implements Collector<Return_, array{to: string, from: string[]}>
+ * @implements FlowCollector<Return_>
  */
-final readonly class ReturnCollector implements Collector
+final readonly class ReturnCollector implements FlowCollector
 {
     public function __construct(private ExpressionFlattener $expressionFlattener) {}
 
@@ -37,9 +36,9 @@ final readonly class ReturnCollector implements Collector
             return null;
         }
 
-        return [
+        return [[
             'to' => TaintNode::returnValue(FunctionKey::of($scope))->toString(),
             'from' => $from,
-        ];
+        ]];
     }
 }

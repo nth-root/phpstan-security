@@ -11,12 +11,11 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
 use PhpParser\Node\Expr\CallLike;
 use PHPStan\Analyser\Scope;
-use PHPStan\Collectors\Collector;
 
 /**
- * @implements Collector<CallLike, list<array{to: string, from: string[]}>>
+ * @implements FlowCollector<CallLike>
  */
-final readonly class CallArgumentCollector implements Collector
+final readonly class CallArgumentCollector implements FlowCollector
 {
     public function __construct(
         private Callees $callees,

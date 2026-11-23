@@ -49,30 +49,17 @@ final readonly class TaintRule implements Rule
     {
         $graph = new TaintGraph();
 
-        $assignmentsByFile = [
+        $assignmentListsByFile = [
             $node->get(AssignmentCollector::class),
             $node->get(CompoundAssignmentCollector::class),
             $node->get(ReturnCollector::class),
-        ];
-
-        foreach ($assignmentsByFile as $collected) {
-            foreach ($collected as $assignments) {
-                foreach ($assignments as $assignment) {
-                    foreach ($assignment['from'] as $from) {
-                        $graph->addEdge($from, $assignment['to']);
-                    }
-                }
-            }
-        }
-
-        $assignmentListsByFile = [
             $node->get(CallArgumentCollector::class),
             $node->get(SymfonyRouteParameterCollector::class),
         ];
 
         foreach ($assignmentListsByFile as $collected) {
-            foreach ($collected as $calls) {
-                foreach ($calls as $assignments) {
+            foreach ($collected as $assignmentLists) {
+                foreach ($assignmentLists as $assignments) {
                     foreach ($assignments as $assignment) {
                         foreach ($assignment['from'] as $from) {
                             $graph->addEdge($from, $assignment['to']);
