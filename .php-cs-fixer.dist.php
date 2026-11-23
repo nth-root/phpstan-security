@@ -10,6 +10,7 @@ return (new Config())
     ->setRules([
         '@auto' => true,
         '@auto:risky' => true,
+        'no_unused_imports' => true,
         'php_unit_test_case_static_method_calls' => ['call_type' => 'this'],
     ])
     // 💡 by default, Fixer looks for `*.php` files excluding `./vendor/` - here, you can groom this config
