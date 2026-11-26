@@ -12,6 +12,8 @@ parameters:
                 strtolower: {parameters: [string]}
                 strtoupper: {parameters: [string]}
                 str_replace: {parameters: [replace, subject]}
+                preg_replace: {parameters: [replacement, subject]}
+                preg_replace_callback: {parameters: [subject]}
                 sprintf: {parameters: [format, values]}
                 implode: {parameters: [separator, array], valuesOnly: true}
                 explode: {parameters: [string]}
