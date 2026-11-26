@@ -32,6 +32,11 @@ final readonly class TaintNode
         return new self(NodeKind::Variable, $functionKey . ':' . $variable);
     }
 
+    public static function property(string $class, string $name): self
+    {
+        return new self(NodeKind::Property, $class . '::' . $name);
+    }
+
     /**
      * @param SinkType[] $types
      */
@@ -77,7 +82,7 @@ final readonly class TaintNode
     public function describe(): string
     {
         return match ($this->kind) {
-            NodeKind::Source => $this->name,
+            NodeKind::Source, NodeKind::Property => $this->name,
             NodeKind::Variable => substr($this->name, strrpos($this->name, ':') + 1),
             NodeKind::Sanitized => self::fromString($this->unwrap())->describe(),
             NodeKind::Return => $this->name . '()',

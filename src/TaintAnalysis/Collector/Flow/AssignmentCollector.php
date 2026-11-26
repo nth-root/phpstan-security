@@ -23,12 +23,12 @@ final readonly class AssignmentCollector implements FlowCollector
 
     public function processNode(Node $node, Scope $scope): ?array
     {
-        $flow = $this->expressionFlattener->flattenAssignment(
+        $flows = $this->expressionFlattener->flattenAssignment(
             $node->var,
             $this->expressionFlattener->flatten($node->expr, $scope),
             $scope
         );
 
-        return $flow === null ? null : [$flow];
+        return $flows === [] ? null : $flows;
     }
 }

@@ -27,12 +27,12 @@ final readonly class CompoundAssignmentCollector implements FlowCollector
             return null;
         }
 
-        $flow = $this->expressionFlattener->flattenAssignment(
+        $flows = $this->expressionFlattener->flattenAssignment(
             $node->var,
             $this->expressionFlattener->flatten($node->expr, $scope),
             $scope
         );
 
-        return $flow === null ? null : [$flow];
+        return $flows === [] ? null : $flows;
     }
 }

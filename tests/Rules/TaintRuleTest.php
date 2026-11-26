@@ -840,6 +840,18 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testFollowsProperties(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/properties.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 12],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 27],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 42],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 58],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 79],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 95],
+        ]);
+    }
+
     private function getMessage(SinkType $sinkType, string $source, string $sink): string
     {
         return sprintf(

@@ -12,7 +12,10 @@ use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\NullsafePropertyFetch;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
@@ -34,6 +37,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function array_keys;
 use function array_map;
+use function array_values;
 use function is_string;
 use function preg_match;
 
@@ -67,6 +71,10 @@ final readonly class ExpressionFlattener
             }
 
             return [TaintNode::variable(FunctionKey::of($scope), $expr->name)->toString()];
+        }
+
+        if ($expr instanceof PropertyFetch || $expr instanceof NullsafePropertyFetch || $expr instanceof StaticPropertyFetch) {
+            return $this->propertyNodes($expr, $scope);
         }
 
         if ($expr instanceof ArrayDimFetch) {
@@ -133,9 +141,9 @@ final readonly class ExpressionFlattener
     /**
      * @param string[] $from
      *
-     * @return array{to: string, from: string[]}|null
+     * @return list<array{to: string, from: string[]}>
      */
-    public function flattenAssignment(Expr $target, array $from, Scope $scope): ?array
+    public function flattenAssignment(Expr $target, array $from, Scope $scope): array
     {
         while ($target instanceof ArrayDimFetch) {
             if ($target->dim !== null) {
@@ -145,14 +153,19 @@ final readonly class ExpressionFlattener
             $target = $target->var;
         }
 
-        if (!$target instanceof Variable || !is_string($target->name) || $from === []) {
-            return null;
+        if ($from === []) {
+            return [];
         }
 
-        return [
-            'to' => TaintNode::variable(FunctionKey::of($scope), $target->name)->toString(),
-            'from' => $from,
-        ];
+        $to = match (true) {
+            $target instanceof Variable && is_string($target->name) => [
+                TaintNode::variable(FunctionKey::of($scope), $target->name)->toString(),
+            ],
+            $target instanceof PropertyFetch || $target instanceof StaticPropertyFetch => $this->propertyNodes($target, $scope),
+            default => [],
+        };
+
+        return array_map(fn(string $node) => ['to' => $node, 'from' => $from], $to);
     }
 
     /**
@@ -240,6 +253,54 @@ final readonly class ExpressionFlattener
         $source = $this->taintSpec->getMethodSource($this->reflectionProvider->getClass($className), $name->toString());
 
         return $source === null ? [] : [TaintNode::source($source)->toString()];
+    }
+
+    /**
+     * @return list<string> ids of the property nodes the fetch can refer to
+     */
+    private function propertyNodes(PropertyFetch|NullsafePropertyFetch|StaticPropertyFetch $fetch, Scope $scope): array
+    {
+        if (!$fetch->name instanceof Identifier) {
+            return [];
+        }
+
+        $name = $fetch->name->toString();
+        $properties = [];
+
+        if ($fetch instanceof StaticPropertyFetch) {
+            if (!$fetch->class instanceof Name) {
+                return [];
+            }
+
+            $className = $scope->resolveName($fetch->class);
+
+            if (!$this->reflectionProvider->hasClass($className)) {
+                return [];
+            }
+
+            $class = $this->reflectionProvider->getClass($className);
+
+            if ($class->hasStaticProperty($name)) {
+                $properties[] = $class->getStaticProperty($name);
+            }
+        } else {
+            $receiverType = TypeCombinator::intersect($scope->getType($fetch->var), new ObjectWithoutClassType());
+
+            foreach ($receiverType->getObjectClassReflections() as $class) {
+                if ($class->hasInstanceProperty($name)) {
+                    $properties[] = $class->getInstanceProperty($name, $scope);
+                }
+            }
+        }
+
+        $nodes = [];
+
+        foreach ($properties as $property) {
+            $node = TaintNode::property($property->getDeclaringClass()->getName(), $name)->toString();
+            $nodes[$node] = $node;
+        }
+
+        return array_values($nodes);
     }
 
     /**
