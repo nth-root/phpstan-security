@@ -8,6 +8,7 @@ use NthRoot\PhpstanSecurity\TaintAnalysis\ExpressionFlattener;
 use NthRoot\PhpstanSecurity\TaintAnalysis\FunctionKey;
 use NthRoot\PhpstanSecurity\TaintAnalysis\TaintNode;
 use PhpParser\Node;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
@@ -28,18 +29,23 @@ final readonly class AssignmentCollector implements FlowCollector
 
     public function processNode(Node $node, Scope $scope): ?array
     {
-        if (!$node->var instanceof Variable || !is_string($node->var->name)) {
-            return null;
+        $from = $this->expressionFlattener->flatten($node->expr, $scope);
+        $target = $node->var;
+
+        while ($target instanceof ArrayDimFetch) {
+            if ($target->dim !== null) {
+                $from = [...$from, ...$this->expressionFlattener->flatten($target->dim, $scope)];
+            }
+
+            $target = $target->var;
         }
 
-        $from = $this->expressionFlattener->flatten($node->expr, $scope);
-
-        if ($from === []) {
+        if (!$target instanceof Variable || !is_string($target->name) || $from === []) {
             return null;
         }
 
         return [[
-            'to' => TaintNode::variable(FunctionKey::of($scope), $node->var->name)->toString(),
+            'to' => TaintNode::variable(FunctionKey::of($scope), $target->name)->toString(),
             'from' => $from,
         ]];
     }

@@ -826,6 +826,20 @@ class TaintRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testFollowsArrayElementAssignments(): void
+    {
+        $this->analyse([__DIR__ . '/data/taint/array_elements.php'], [
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 8],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 14],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 21],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 27],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 33],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 40],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 47],
+            [$this->getMessage(SinkType::Shell, '$_GET', 'exec()'), 55],
+        ]);
+    }
+
     private function getMessage(SinkType $sinkType, string $source, string $sink): string
     {
         return sprintf(
