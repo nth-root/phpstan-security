@@ -131,6 +131,31 @@ final readonly class ExpressionFlattener
     }
 
     /**
+     * @param string[] $from
+     *
+     * @return array{to: string, from: string[]}|null
+     */
+    public function flattenAssignment(Expr $target, array $from, Scope $scope): ?array
+    {
+        while ($target instanceof ArrayDimFetch) {
+            if ($target->dim !== null) {
+                $from = [...$from, ...$this->flatten($target->dim, $scope)];
+            }
+
+            $target = $target->var;
+        }
+
+        if (!$target instanceof Variable || !is_string($target->name) || $from === []) {
+            return null;
+        }
+
+        return [
+            'to' => TaintNode::variable(FunctionKey::of($scope), $target->name)->toString(),
+            'from' => $from,
+        ];
+    }
+
+    /**
      * @return string[]
      */
     public function flattenSinkArgument(Expr $arg, SinkType $type, Scope $scope): array
