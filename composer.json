@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "phpstan/phpstan": "^2.1.3"
+        "phpstan/phpstan": "^2.1.26"
     },
     "require-dev": {
         "doctrine/dbal": "^4.3",
